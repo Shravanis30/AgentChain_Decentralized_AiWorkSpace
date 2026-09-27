@@ -1,0 +1,93 @@
+# ==============================================================================
+# AgentChain .gitignore
+# ==============================================================================
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.venv/
+venv/
+ENV/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Testing & Coverage
+coverage/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.lcov
+
+# Build Outputs & Caches
+dist/
+build/
+*.egg-info/
+.next/
+out/
+*.tsbuildinfo
+*.tsbuildinfo*
+
+# Smart Contracts (Foundry & Slither)
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+contracts/slither-output.json
+slither-output.json
+
+# Environment and Secrets (CRITICAL)
+.env
+.env.*
+!.env.example
+!.env.production.template
+*.pem
+*.key
+*.keystore
+.dev_wallet.txt
+.secrets*
+*credentials*.json
+*wallet*.json
+*.id_rsa
+*.id_ed25519
+private_key*
+*secret*
+
+# Databases and Local Storage
+infra/volumes/
+minio-data/
+postgres-data/
+qdrant-data/
+redis-data/
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE & OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker
+*.tar
