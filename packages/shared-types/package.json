@@ -1,0 +1,13 @@
+{
+  "name": "@agentchain/shared-types",
+  "version": "0.1.0",
+  "description": "Shared TypeScript types and interfaces for AgentChain",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2"
+  }
+}
