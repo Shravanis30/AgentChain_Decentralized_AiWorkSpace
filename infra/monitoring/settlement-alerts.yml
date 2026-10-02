@@ -1,0 +1,387 @@
+---
+# AgentChain Settlement & Blockchain Prometheus Alert Rules
+# Phase 6.2B.2 Production Readiness
+#
+# Threshold Rationale documented inline for every rule.
+# All labels are bounded cardinality (chain_id, action, reason -- never user IDs or tx hashes).
+#
+# Load with Prometheus rule_files directive:
+#   rule_files:
+#     - /etc/prometheus/rules/settlement-alerts.yml
+
+groups:
+  # A. Deep Reorg Detection
+  - name: agentchain.reorg
+    rules:
+      - alert: DeepReorgDetected
+        expr: increase(blockchain_reorgs_total[10m]) > 0 and blockchain_reorg_depth > 32
+        for: 0m
+        labels:
+          severity: critical
+          team: blockchain
+        annotations:
+          summary: "Deep chain reorganization detected (>32 blocks)"
+          description: >
+            A reorg of depth >32 blocks was detected on chain {{ $labels.chain_id }}.
+            All settlement authorizations on this chain have been halted automatically.
+            Immediate operator investigation is required per DEEP_REORG_RUNBOOK.md.
+            Value: {{ $value }} reorgs in last 10 minutes.
+          runbook: "https://github.com/agentchain/docs/blob/main/docs/DEEP_REORG_RUNBOOK.md"
+
+      - alert: ShallowReorgSpike
+        expr: increase(blockchain_reorgs_total[30m]) > 3
+        for: 5m
+        labels:
+          severity: warning
+          team: blockchain
+        annotations:
+          summary: "Elevated shallow reorg rate on chain {{ $labels.chain_id }}"
+          description: >
+            More than 3 reorgs detected in 30 minutes on chain {{ $labels.chain_id }}.
+            This may indicate RPC provider instability. Review provider health.
+            Value: {{ $value }} reorgs.
+            Threshold: 3 reorgs/30min is elevated but not yet critical.
+
+  # B. Settlement Authorization Blocked
+  - name: agentchain.settlement.authorization
+    rules:
+      - alert: SettlementAuthorizationBlocked
+        expr: increase(settlement_authorization_blocked_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          team: settlement
+        annotations:
+          summary: "Excessive settlement authorization blocks on chain {{ $labels.chain_id }}"
+          description: >
+            More than 10 settlement authorizations were blocked in the last 5 minutes
+            for action {{ $labels.action }}. Reason: {{ $labels.reason }}.
+            Threshold: 10 blocks in 5 minutes suggests systemic issue, not individual retries.
+
+      - alert: MainnetSettlementAttempted
+        expr: increase(settlement_mainnet_blocked_total[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          team: security
+        annotations:
+          summary: "SECURITY: Base Mainnet settlement attempt detected and blocked"
+          description: >
+            A settlement attempt targeting Base Mainnet (chain_id=8453) was detected
+            and blocked by the hard safety gate. This is a security event.
+            Investigate the source of the request immediately.
+            Threshold: Any mainnet attempt is immediately critical.
+
+  # C. Settlement Confirmation Latency
+  - name: agentchain.settlement.latency
+    rules:
+      - alert: SettlementConfirmationLatencyHigh
+        expr: histogram_quantile(0.95, rate(settlement_latency_seconds_bucket{phase="confirmation"}[10m])) > 300
+        for: 5m
+        labels:
+          severity: warning
+          team: settlement
+        annotations:
+          summary: "P95 settlement confirmation latency >5 minutes"
+          description: >
+            The 95th percentile settlement confirmation latency is {{ $value }}s
+            for action {{ $labels.action }}.
+            Expected <5 minutes (Base Sepolia ~15s/block x 3 confirms = ~45s).
+            Threshold: 300s P95 is well beyond expected ~45s.
+
+      - alert: SettlementConfirmationLatencyCritical
+        expr: histogram_quantile(0.99, rate(settlement_latency_seconds_bucket{phase="confirmation"}[10m])) > 900
+        for: 5m
+        labels:
+          severity: critical
+          team: settlement
+        annotations:
+          summary: "P99 settlement confirmation latency >15 minutes"
+          description: >
+            P99 settlement confirmation is taking {{ $value }}s.
+            Transactions may be stuck in the mempool or dropped.
+            Threshold: 900s P99 indicates critical infrastructure failure.
+
+  # D. Settlement Failure Spike
+  - name: agentchain.settlement.failure
+    rules:
+      - alert: SettlementFailureSpike
+        expr: >
+          rate(settlement_failed_total[5m]) /
+          (rate(settlement_confirmed_total[5m]) + rate(settlement_failed_total[5m]) + 0.001) > 0.10
+        for: 5m
+        labels:
+          severity: warning
+          team: settlement
+        annotations:
+          summary: "Settlement failure rate >10% on chain {{ $labels.chain_id }}"
+          description: >
+            More than 10% of settlements are failing on chain {{ $labels.chain_id }}.
+            Action: {{ $labels.action }}. Current failure ratio: {{ $value }}.
+            Threshold: 10% failure rate signals a systemic issue.
+
+      - alert: SettlementFailureCritical
+        expr: >
+          rate(settlement_failed_total[5m]) /
+          (rate(settlement_confirmed_total[5m]) + rate(settlement_failed_total[5m]) + 0.001) > 0.30
+        for: 3m
+        labels:
+          severity: critical
+          team: settlement
+        annotations:
+          summary: "Settlement failure rate >30% -- critical on chain {{ $labels.chain_id }}"
+          description: >
+            Over 30% of settlements are failing. Chain {{ $labels.chain_id }}.
+            Threshold: 30% failure = likely complete subsystem degradation.
+
+  # E. Settlement Reorg Invalidation
+  - name: agentchain.settlement.reorg
+    rules:
+      - alert: SettlementReorgInvalidation
+        expr: increase(settlement_reorg_invalidated_total[10m]) > 2
+        for: 0m
+        labels:
+          severity: warning
+          team: settlement
+        annotations:
+          summary: "Settlements invalidated by reorg on chain {{ $labels.chain_id }}"
+          description: >
+            {{ $value }} settlements were invalidated due to reorg in the last 10 minutes.
+            Threshold: >2 reorg-invalidated settlements in 10 min is elevated.
+
+  # F. Relayer Failure
+  - name: agentchain.relayer
+    rules:
+      - alert: RelayerTransactionFailureSpike
+        expr: increase(blockchain_failed_transactions_total[10m]) > 5
+        for: 5m
+        labels:
+          severity: warning
+          team: relayer
+        annotations:
+          summary: "Relayer transaction failures spiking on chain {{ $labels.chain_id }}"
+          description: >
+            {{ $value }} on-chain transaction failures (reverts) in the last 10 minutes.
+            Threshold: >5 reverts in 10 min suggests systemic calldata or state problem.
+
+      - alert: RelayerDown
+        expr: up{job="agentchain-relayer"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: relayer
+        annotations:
+          summary: "Relayer process is down"
+          description: >
+            The AgentChain relayer process is unreachable.
+            Pending transaction intents will not be submitted.
+            Threshold: Any relayer downtime is critical.
+
+  # G. RPC Failure
+  - name: agentchain.rpc
+    rules:
+      - alert: RpcErrorRateHigh
+        expr: rate(blockchain_rpc_errors_total[5m]) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+          team: blockchain
+        annotations:
+          summary: "RPC error rate elevated on chain {{ $labels.chain_id }}"
+          description: >
+            RPC error rate is {{ $value }}/s on chain {{ $labels.chain_id }}.
+            Threshold: 0.5/s sustained = significant provider degradation.
+
+      - alert: RpcErrorRateCritical
+        expr: rate(blockchain_rpc_errors_total[5m]) > 2.0
+        for: 2m
+        labels:
+          severity: critical
+          team: blockchain
+        annotations:
+          summary: "RPC failure rate critical on chain {{ $labels.chain_id }}"
+          description: >
+            RPC error rate exceeds 2.0/s on chain {{ $labels.chain_id }}.
+            Threshold: 2.0/s = effective RPC outage.
+
+  # H. Transaction Replacement Spike
+  - name: agentchain.replacement
+    rules:
+      - alert: TransactionReplacementSpike
+        expr: increase(blockchain_replaced_transactions_total[30m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          team: relayer
+        annotations:
+          summary: "High transaction replacement rate on chain {{ $labels.chain_id }}"
+          description: >
+            {{ $value }} transaction replacements (gas bumps) in the last 30 minutes.
+            Threshold: >10 replacements/30min = persistent mempool congestion.
+
+  # I. Nonce Contention
+  - name: agentchain.nonce
+    rules:
+      - alert: NonceContention
+        expr: increase(blockchain_nonce_conflicts_total[10m]) > 3
+        for: 5m
+        labels:
+          severity: warning
+          team: relayer
+        annotations:
+          summary: "Nonce conflicts detected on chain {{ $labels.chain_id }}"
+          description: >
+            {{ $value }} nonce conflicts in the last 10 minutes on chain {{ $labels.chain_id }}.
+            Threshold: >3 conflicts/10min indicates systemic nonce management problem.
+
+  # J. Outbox Backlog
+  - name: agentchain.outbox
+    rules:
+      - alert: OutboxBacklogHigh
+        expr: blockchain_outbox_pending > 50
+        for: 5m
+        labels:
+          severity: warning
+          team: relayer
+        annotations:
+          summary: "Transaction outbox backlog is high ({{ $value }} items)"
+          description: >
+            The blockchain transaction outbox has {{ $value }} pending items.
+            Normal backlog should be <10.
+            Threshold: >50 pending after 5 min = relayer not consuming properly.
+
+      - alert: OutboxBacklogCritical
+        expr: blockchain_outbox_pending > 200
+        for: 5m
+        labels:
+          severity: critical
+          team: relayer
+        annotations:
+          summary: "Transaction outbox backlog is critical ({{ $value }} items)"
+          description: >
+            The blockchain transaction outbox has {{ $value }} pending items.
+            Threshold: >200 pending = full relayer failure.
+
+  # K. Indexer Lag
+  - name: agentchain.indexer
+    rules:
+      - alert: IndexerLagHigh
+        expr: blockchain_indexing_lag_blocks > 20
+        for: 5m
+        labels:
+          severity: warning
+          team: blockchain
+        annotations:
+          summary: "Blockchain indexer lag >20 blocks on chain {{ $labels.chain_id }}"
+          description: >
+            The indexer is {{ $value }} blocks behind chain head.
+            Threshold: 20 blocks = ~40s on Base (2s blocks).
+            This can cause confirmation depth failures (Sepolia requires 3 confirms).
+
+      - alert: IndexerLagCritical
+        expr: blockchain_indexing_lag_blocks > 64
+        for: 5m
+        labels:
+          severity: critical
+          team: blockchain
+        annotations:
+          summary: "Blockchain indexer critically behind on chain {{ $labels.chain_id }}"
+          description: >
+            The indexer is {{ $value }} blocks behind.
+            Threshold: 64 blocks = 2x the 32-block reorg window.
+            State is no longer trustworthy for settlement authorization.
+
+  # L. Stale Settlement Reconciliation
+  - name: agentchain.reconciliation
+    rules:
+      - alert: SettlementReconciliationStale
+        expr: time() - settlement_last_reconciliation_timestamp > 300
+        for: 5m
+        labels:
+          severity: warning
+          team: settlement
+        annotations:
+          summary: "Settlement reconciliation has not run in >5 minutes"
+          description: >
+            Reconciliation last ran {{ $value }}s ago.
+            Expected cycle: every 30-60s.
+            Threshold: >5 min without reconciliation = stuck SUBMITTED settlements.
+
+      - alert: SettlementReconciliationCritical
+        expr: time() - settlement_last_reconciliation_timestamp > 900
+        for: 5m
+        labels:
+          severity: critical
+          team: settlement
+        annotations:
+          summary: "Settlement reconciliation halted for >15 minutes"
+          description: >
+            Reconciliation has not run in {{ $value }}s.
+            Threshold: 15 min without reconciliation = critical service degradation.
+
+  # M. Mainnet Security Events (separate group for dedicated PagerDuty routing)
+  - name: agentchain.security
+    rules:
+      - alert: MainnetSettlementAttemptSecurity
+        expr: increase(settlement_mainnet_blocked_total[1m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          team: security
+          pagerduty_service: agentchain-security
+        annotations:
+          summary: "SECURITY ALERT: Base Mainnet settlement blocked"
+          description: >
+            A Base Mainnet (chain_id=8453) settlement attempt was intercepted.
+            This should NEVER occur. Count in last 1m: {{ $value }}.
+            Investigate request source, credentials, and environment configuration.
+          runbook: "https://github.com/agentchain/docs/blob/main/docs/SETTLEMENT_SECURITY.md"
+
+      - alert: LocalSignerOnWrongChain
+        expr: increase(blockchain_failed_transactions_total{reason="signer_chain_violation"}[5m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+          team: security
+        annotations:
+          summary: "SECURITY: LocalAccountSigner rejected on incompatible chain"
+          description: >
+            The LocalAccountSigner attempted to sign for an incompatible chain.
+            Defense-in-depth trigger. Investigate relayer configuration immediately.
+
+  # N. Reorg Recovery Failure
+  - name: agentchain.reorg.recovery
+    rules:
+      - alert: ReorgRecoveryManualActionRequired
+        expr: >
+          increase(blockchain_reorgs_total[1h]) > 0
+          and on(chain_id)
+          settlement_authorization_blocked_total > 0
+        for: 60m
+        labels:
+          severity: critical
+          team: blockchain
+        annotations:
+          summary: "Manual operator recovery required for deep reorg on chain {{ $labels.chain_id }}"
+          description: >
+            Chain {{ $labels.chain_id }} has been in a blocked reorg state for over 60 minutes.
+            Automatic recovery has not resolved the issue.
+            An authorized operator must follow DEEP_REORG_RUNBOOK.md to restore service.
+          runbook: "https://github.com/agentchain/docs/blob/main/docs/DEEP_REORG_RUNBOOK.md"
+
+  # O. Signer Health Failure
+  - name: agentchain.signer
+    rules:
+      - alert: SignerUnhealthy
+        expr: agentchain_signer_healthy == 0
+        for: 1m
+        labels:
+          severity: critical
+          team: security
+        annotations:
+          summary: "Production signer is unhealthy on chain {{ $labels.chain_id }}"
+          description: >
+            The configured transaction signer (KMS/HSM/MPC) reports unhealthy.
+            No transactions can be signed until signer is restored.
+            Signer type: {{ $labels.signer_type }}.
+            Threshold: Any signer failure is immediately critical.
