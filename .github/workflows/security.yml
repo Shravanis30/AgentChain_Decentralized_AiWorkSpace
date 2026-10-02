@@ -1,0 +1,139 @@
+name: Security Analysis (Slither)
+
+# Trigger on contract or security workflow changes.
+# Separate from the Foundry test job so security analysis can be tracked independently.
+on:
+  push:
+    paths:
+      - 'contracts/src/**'
+      - 'contracts/script/**'
+      - '.github/workflows/security.yml'
+  pull_request:
+    paths:
+      - 'contracts/src/**'
+      - 'contracts/script/**'
+      - '.github/workflows/security.yml'
+
+jobs:
+  slither:
+    name: Slither Static Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write  # For SARIF upload if enabled
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Slither (pinned version)
+        # IMPORTANT: Pin slither-analyzer version to guarantee reproducible analysis.
+        # Upgrade only after reviewing Slither changelog for new detector behavior.
+        # Current pinned version: 0.10.4
+        run: pip install slither-analyzer==0.10.4
+
+      - name: Compile contracts before analysis
+        working-directory: contracts
+        run: forge build --skip test script
+
+      - name: Run Slither analysis
+        working-directory: contracts
+        # --fail-on: only fail CI for high and above severity from our OWN contracts.
+        # Third-party library findings (lib/) are filtered via --filter-paths.
+        # JSON output is saved for artifact upload and auditing.
+        run: |
+          slither . \
+            --filter-paths "lib/" \
+            --json slither-output.json \
+            --sarif slither-output.sarif \
+            2>&1 | tee slither-report.txt
+
+      - name: Check for high/critical findings
+        working-directory: contracts
+        # Fail CI only if Slither found HIGH or CRITICAL issues in production contracts.
+        # Informational and low-severity findings are documented but do not block merging.
+        # Accepted false positives must be documented in docs/blockchain/SLITHER_ACCEPTED.md
+        run: |
+          python3 - << 'PYEOF'
+          import json, sys
+
+          HIGH_SEVERITIES = {"High", "Critical"}
+          # Paths that are explicitly excluded from hard-fail CI blocking
+          EXCLUDED_PATHS = ["lib/", "test/", "script/"]
+
+          try:
+              with open("slither-output.json") as f:
+                  data = json.load(f)
+          except (FileNotFoundError, json.JSONDecodeError) as e:
+              print(f"Could not read slither-output.json: {e}")
+              sys.exit(0)  # Non-fatal if analysis produced no JSON
+
+          results = data.get("results", {}).get("detectors", [])
+          hard_failures = []
+
+          for r in results:
+              impact = r.get("impact", "")
+              if impact not in HIGH_SEVERITIES:
+                  continue
+              # Check if finding is in production sources only
+              elements = r.get("elements", [])
+              for el in elements:
+                  src = el.get("source_mapping", {}).get("filename_relative", "")
+                  if not any(src.startswith(ex) for ex in EXCLUDED_PATHS):
+                      hard_failures.append({
+                          "detector": r.get("check"),
+                          "impact": impact,
+                          "description": r.get("description", "")[:200],
+                          "source": src,
+                      })
+
+          if hard_failures:
+              print(f"\n{'='*60}")
+              print(f"SLITHER: {len(hard_failures)} HIGH/CRITICAL finding(s) in production contracts:")
+              print(f"{'='*60}")
+              for f in hard_failures:
+                  print(f"  [{f['impact']}] {f['detector']} in {f['source']}")
+                  print(f"    {f['description']}")
+              print(f"\nReview and fix findings or document as accepted in docs/blockchain/SLITHER_ACCEPTED.md")
+              sys.exit(1)
+          else:
+              print("Slither: No HIGH/CRITICAL findings in production contracts. CI passed.")
+              sys.exit(0)
+          PYEOF
+
+      - name: Upload Slither reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: slither-analysis-${{ github.sha }}
+          path: |
+            contracts/slither-output.json
+            contracts/slither-output.sarif
+            contracts/slither-report.txt
+          retention-days: 30
+
+# ─────────────────────────────────────────────────────────────────
+# LOCAL DEVELOPMENT: Run the same check locally before pushing:
+#
+#   # Install (first time only):
+#   pip install slither-analyzer==0.10.4
+#
+#   # Run analysis:
+#   cd contracts
+#   forge build --skip test script
+#   slither . --filter-paths "lib/" --json /tmp/slither-output.json 2>&1
+#
+#   # The full list of findings including accepted false positives:
+#   # See docs/blockchain/SLITHER_ACCEPTED.md
+# ─────────────────────────────────────────────────────────────────

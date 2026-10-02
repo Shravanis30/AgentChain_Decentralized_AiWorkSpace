@@ -1,0 +1,34 @@
+name: Contracts CI
+
+on:
+  push:
+    paths:
+      - 'contracts/**'
+      - '.github/workflows/contracts.yml'
+  pull_request:
+    paths:
+      - 'contracts/**'
+      - '.github/workflows/contracts.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+
+      - name: Check Formatting
+        working-directory: contracts
+        run: forge fmt --check
+
+      - name: Compile Contracts
+        working-directory: contracts
+        run: forge build --sizes
+
+      - name: Run Contract Tests
+        working-directory: contracts
+        run: forge test -vvv
