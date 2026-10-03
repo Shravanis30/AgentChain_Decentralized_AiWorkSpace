@@ -1,0 +1,41 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AgentChainRuntimeSignerLeastPrivilege",
+      "Effect": "Allow",
+      "Action": [
+        "kms:DescribeKey",
+        "kms:GetPublicKey",
+        "kms:Sign",
+        "kms:Verify"
+      ],
+      "Resource": "arn:aws:kms:<AWS_REGION>:<AWS_ACCOUNT_ID>:key/<KMS_KEY_ID>",
+      "Condition": {
+        "StringEquals": {
+          "kms:SigningAlgorithm": "ECDSA_SHA_256",
+          "kms:MessageType": "DIGEST"
+        }
+      }
+    },
+    {
+      "Sid": "ExplicitDenyKeyLifecycleAdministration",
+      "Effect": "Deny",
+      "Action": [
+        "kms:CreateKey",
+        "kms:Delete*",
+        "kms:ScheduleKeyDeletion",
+        "kms:DisableKey",
+        "kms:EnableKey",
+        "kms:PutKeyPolicy",
+        "kms:UpdateKeyDescription",
+        "kms:CreateGrant",
+        "kms:RevokeGrant",
+        "kms:RetireGrant",
+        "kms:TagResource",
+        "kms:UntagResource"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
