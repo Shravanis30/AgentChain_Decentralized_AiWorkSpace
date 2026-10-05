@@ -1,0 +1,105 @@
+{
+  "phase": "PHASE 6.10.4 — LIVE AWS KMS VERIFICATION & PRODUCTION SIGNER ATTESTATION",
+  "release_classification": "PARTIAL — AWS KMS PROVIDER VERIFICATION: NOT EXECUTED",
+  "aws_kms_provider": {
+    "provider_available": false,
+    "status": "NOT EXECUTED",
+    "reason": "AWS_KMS_KEY_ARN and ambient AWS credentials were not provided in operator environment. In accordance with Section 1 safety rules, no cloud infrastructure, IAM roles, or KMS keys were created or modified.",
+    "key_state": "Enabled (Required specification)",
+    "key_usage": "SIGN_VERIFY (Required specification)",
+    "key_spec": "ECC_SECG_P256K1 (Required specification)",
+    "signing_algorithm": "ECDSA_SHA_256",
+    "test_message": "AgentChain Phase 6.10.4 KMS attestation",
+    "test_digest": "0x539958cf1ff03a9f73a388f8d689622d645f78c80058b7ae230b05b38a44bb4f",
+    "public_key_verified": "NOT EXECUTED (Live AWS KMS Key Pending)",
+    "derived_signer_address": null,
+    "expected_address_match": null,
+    "sign_operation": "NOT EXECUTED (Live AWS KMS Key Pending)",
+    "der_signature_verified": "NOT EXECUTED (Live AWS KMS Key Pending)",
+    "low_s_verified": "NOT EXECUTED (Live AWS KMS Key Pending)",
+    "recovery_verified": "NOT EXECUTED (Live AWS KMS Key Pending)",
+    "recovered_address_match": null,
+    "kms_verify_result": "NOT EXECUTED (Live AWS KMS Key Pending)",
+    "operator_requirements": {
+      "AWS_KMS_KEY_ARN": "Required (operator-supplied existing KMS key ARN)",
+      "AWS_REGION": "Required (e.g. us-east-1)",
+      "EXPECTED_SIGNER_ADDRESS": "Required (checksummed Ethereum address matching KMS public key)",
+      "boto3_credential_provider_chain": "Required (ambient IAM role, AWS profile, or SSO session)"
+    }
+  },
+  "local_attestation_verification": {
+    "classification": "LOCAL — EXECUTED",
+    "test_suite": "backend/tests/test_phase_6_10_4_kms_attestation.py",
+    "tests_passed": 7,
+    "tests_failed": 0,
+    "attestation_digest_verified": true,
+    "der_signature_bounds_verified": true,
+    "low_s_normalization_verified": true,
+    "recovery_id_determination_verified": true,
+    "address_recovery_verified": true,
+    "kms_verify_mock_verified": true,
+    "signer_factory_integration_verified": true,
+    "relayer_startup_attestation_verified": true,
+    "negative_identity_test_passed": true,
+    "negative_network_test_passed": true,
+    "prerequisite_check_fail_closed_verified": true
+  },
+  "blockchain": {
+    "network": "Base Sepolia",
+    "chain_id": 84532,
+    "latest_block_observed": 47598202,
+    "state_changing_transactions": 0,
+    "mainnet_transactions": 0,
+    "total_blockchain_transactions": 0,
+    "evidence_taxonomy": {
+      "LIVE — EXTERNAL CHAIN TRANSACTION": 0,
+      "LIVE — EXTERNAL CHAIN STATE READ": 21,
+      "LIVE — EXTERNAL CHAIN STATE OBSERVATION": 2
+    },
+    "canonical_contracts": {
+      "AgentRegistry": "0x96C3945e264A880EbaB5e95fDF786Fc18A4389B5",
+      "RevenueDistributor": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "Escrow": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "ResultNotary": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+      "ReputationRegistry": "0x423856529583F536d5dFaE80f7Bc142075c6Fc71",
+      "USDC": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+    }
+  },
+  "local_execution": {
+    "classification": "LOCAL — EXECUTED",
+    "tests_executed": 239,
+    "breakdown": {
+      "test_phase_6_10_4_kms_attestation": 7,
+      "test_kms_operational_controls": 22,
+      "test_aws_kms_signer": 43,
+      "test_phase_6_10_production_signer_mainnet_safety": 21,
+      "test_production_readiness": 24,
+      "foundry_contracts_suite": 122
+    },
+    "all_passed": true
+  },
+  "simulations": {
+    "classification": "SIMULATED — BASE SEPOLIA STATE",
+    "count": 0
+  },
+  "static_inspection": {
+    "classification": "STATIC — INSPECTED",
+    "production_safety_gates": {
+      "passed": 8,
+      "failed": 0
+    },
+    "config_drift_scanner": {
+      "status": "PASS",
+      "drift_detected": false
+    },
+    "production_kms_configuration_validator": {
+      "status": "PASS",
+      "exit_code_on_unpopulated_env": 2
+    }
+  },
+  "not_executed": {
+    "classification": "NOT EXECUTED",
+    "item": "Live AWS KMS API call (DescribeKey, GetPublicKey, Sign, Verify)",
+    "reason": "AWS_KMS_KEY_ARN and ambient AWS credentials were not provided in operator environment. In accordance with Section 1 safety rules, no cloud infrastructure or keys were provisioned or mutated."
+  }
+}

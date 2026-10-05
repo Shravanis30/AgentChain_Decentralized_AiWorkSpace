@@ -1,0 +1,140 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "document_id": "AGY-REL-6.12-DECISION-MATRIX",
+  "phase": "6.12",
+  "title": "AgentChain Phase 6.12 Release Decision Matrix & Governance Gate Evaluation",
+  "release_candidate_version": "1.1.0-rc1",
+  "evaluation_timestamp": "2026-10-05T03:55:00Z",
+  "final_release_classification": "AUDIT READY — EXTERNAL REVIEW REQUIRED",
+  "allowed_statuses": [
+    "PASS",
+    "BLOCKED",
+    "OPEN",
+    "ACCEPTED_RISK",
+    "NOT_EXECUTED"
+  ],
+  "decision_matrix": [
+    {
+      "gate_id": "GATE-01",
+      "gate_name": "Contract tests",
+      "status": "PASS",
+      "description": "Foundry test suites verifying Escrow, RevenueDistributor, ResultNotary, ReputationRegistry, and AgentRegistry.",
+      "evidence": "122/122 passed, 256 invariant runs (128,000 calls, 0 reverts)"
+    },
+    {
+      "gate_id": "GATE-02",
+      "gate_name": "Production safety gates",
+      "status": "PASS",
+      "description": "Static and runtime security gates validating git secret exposure, dockerignore, mainnet block, fail-closed boundaries, role separation, and config models.",
+      "evidence": "8/8 checks passed in scripts/verify_production_safety_gates.py"
+    },
+    {
+      "gate_id": "GATE-03",
+      "gate_name": "Configuration drift",
+      "status": "PASS",
+      "description": "Cross-layer authoritative configuration scanner comparing contracts, backend services, indexers, and runbooks.",
+      "evidence": "Zero configuration drift detected in scripts/check_config_drift.py"
+    },
+    {
+      "gate_id": "GATE-04",
+      "gate_name": "Base Sepolia deployment integrity",
+      "status": "PASS",
+      "description": "Read-only live RPC verification of on-chain bytecode and address bindings on Base Sepolia (84532).",
+      "evidence": "15 state reads and 6 bytecode verifications passed in scripts/verify_base_sepolia_read_only.py; 0 new transactions"
+    },
+    {
+      "gate_id": "GATE-05",
+      "gate_name": "Marketplace lifecycle evidence",
+      "status": "PASS",
+      "description": "End-to-end execution of agent registration, escrow funding, result notarization, settlement release, and reputation event.",
+      "evidence": "5 canonical transactions recorded in docs/phases/phase-6.9.4-live-evidence.json"
+    },
+    {
+      "gate_id": "GATE-06",
+      "gate_name": "Revenue split",
+      "status": "PASS",
+      "description": "Conservation of 85% developer, 10% staker, 5% DAO economic split with zero retained dust.",
+      "evidence": "Verified across contracts (RevenueDistributor.sol), backend service, and live chain settlement (Phase 6.9.4)"
+    },
+    {
+      "gate_id": "GATE-07",
+      "gate_name": "Reorg protection",
+      "status": "PASS",
+      "description": "32-block confirmation requirement and deep reorg ancestry unrolling with transactional rollback.",
+      "evidence": "32-block depth enforced across config, indexer, relayer, and tested via test_deep_reorg_halts_settlement_authorization"
+    },
+    {
+      "gate_id": "GATE-08",
+      "gate_name": "Result notarization",
+      "status": "PASS",
+      "description": "Deterministic RFC-8785 canonical JSON formatting and SHA-256 result hashing with on-chain notary verification.",
+      "evidence": "ResultNotary contract tests, adversary tests, and Base Sepolia transaction 0xd916bb5f13a0c7cdf382822eea5d3ee13d9e78b5d19d979e129f32cdd1536dbd"
+    },
+    {
+      "gate_id": "GATE-09",
+      "gate_name": "Reputation integrity",
+      "status": "PASS",
+      "description": "Objective 4-outcome reputation event registry with cryptographic ResultNotary proof binding for verified success.",
+      "evidence": "ReputationRegistry tests (20/20 passed), fuzzing, and live event 0xf701ad4ce6954889f287fb2346e660582a108f97566a920566fc22a4d9792ec1"
+    },
+    {
+      "gate_id": "GATE-10",
+      "gate_name": "Signer implementation",
+      "status": "PASS",
+      "description": "Production signer abstraction supporting AWS KMS, DER signature decoding, BIP-62 low-S normalization, and recovery ID calculation.",
+      "evidence": "43/43 passed in test_aws_kms_signer.py; 21/21 passed in test_phase_6_10_production_signer_mainnet_safety.py"
+    },
+    {
+      "gate_id": "GATE-11",
+      "gate_name": "KMS operational controls",
+      "status": "PASS",
+      "description": "Operational fail-closed controls distinguishing KMS unavailable, key disabled, invalid KeySpec, and identity mismatch.",
+      "evidence": "22/22 passed in test_kms_operational_controls.py; prerequisite validator returns code 2 fail-closed"
+    },
+    {
+      "gate_id": "GATE-12",
+      "gate_name": "Live AWS KMS attestation",
+      "status": "NOT_EXECUTED",
+      "description": "Cryptographic signature generation and public key derivation against an active AWS KMS key in an AWS account.",
+      "evidence": "scripts/verify_aws_kms_live.py returns exit code 2: LIVE AWS KMS VERIFICATION: NOT EXECUTED"
+    },
+    {
+      "gate_id": "GATE-13",
+      "gate_name": "Production KMS custody",
+      "status": "BLOCKED",
+      "description": "Production key ARN provisioning, IAM role scoping, and multi-sig administrative assignment.",
+      "evidence": "Operator action required; production KMS ARN not configured"
+    },
+    {
+      "gate_id": "GATE-14",
+      "gate_name": "Independent external audit",
+      "status": "OPEN",
+      "description": "Formal evaluation and sign-off by independent external security auditors.",
+      "evidence": "Audit dossier prepared in docs/audit/AGENTCHAIN_EXTERNAL_AUDIT_PACKAGE.md and checklist in docs/audit/PHASE_6_12_EXTERNAL_AUDIT_HANDOFF_CHECKLIST.md"
+    },
+    {
+      "gate_id": "GATE-15",
+      "gate_name": "Mainnet governance approval",
+      "status": "BLOCKED",
+      "description": "Multi-sig approval and authorization for production release.",
+      "evidence": "Blocked pending independent audit report completion and live KMS attestation"
+    },
+    {
+      "gate_id": "GATE-16",
+      "gate_name": "Base Mainnet deployment",
+      "status": "BLOCKED",
+      "description": "Broadcast of deployment transactions and relayer activation on Base Mainnet (Chain ID 8453).",
+      "evidence": "Hard-coded programmatic blocks enforced in Deploy.s.sol, relayer.py, signer.py, and production_config.py"
+    }
+  ],
+  "governance_summary": {
+    "total_gates": 16,
+    "gates_passed": 11,
+    "gates_not_executed": 1,
+    "gates_open": 1,
+    "gates_blocked": 3,
+    "gates_accepted_risk": 0,
+    "release_readiness": "FROZEN RELEASE CANDIDATE READY FOR AUDITOR REVIEW",
+    "production_readiness": "PRODUCTION DEPLOYMENT BLOCKED UNTIL LIVE KMS ATTESTATION AND EXTERNAL AUDIT ARE COMPLETE"
+  }
+}

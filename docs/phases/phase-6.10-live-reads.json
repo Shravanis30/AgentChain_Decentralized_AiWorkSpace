@@ -1,0 +1,153 @@
+{
+  "network": "Base Sepolia",
+  "chain_id": 84532,
+  "observed_block_number": 47715723,
+  "observations": [
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE OBSERVATION",
+      "item": "chain_id",
+      "value": 84532
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE OBSERVATION",
+      "item": "latest_block_number",
+      "value": 47715723
+    }
+  ],
+  "bytecode_checks": [
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "contract": "AgentRegistry",
+      "address": "0x96C3945e264A880EbaB5e95fDF786Fc18A4389B5",
+      "bytecode_size_bytes": 2846,
+      "status": "PASS"
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "contract": "RevenueDistributor",
+      "address": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "bytecode_size_bytes": 3793,
+      "status": "PASS"
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "contract": "Escrow",
+      "address": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "bytecode_size_bytes": 8314,
+      "status": "PASS"
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "contract": "ResultNotary",
+      "address": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+      "bytecode_size_bytes": 2061,
+      "status": "PASS"
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "contract": "ReputationRegistry",
+      "address": "0x423856529583F536d5dFaE80f7Bc142075c6Fc71",
+      "bytecode_size_bytes": 3032,
+      "status": "PASS"
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "contract": "USDC",
+      "address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "bytecode_size_bytes": 1798,
+      "status": "PASS"
+    }
+  ],
+  "state_reads": [
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "Escrow.paymentToken()",
+      "value": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "matches_canonical": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "Escrow.distributor()",
+      "value": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "matches_canonical": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "Escrow.totalEscrowBalance()",
+      "value": 100000,
+      "matches_canonical": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "RevenueDistributor.paymentTokenContract()",
+      "value": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "matches_canonical": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "RevenueDistributor.authorizedEscrow()",
+      "value": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "matches_canonical": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "RevenueDistributor.stakerRecipientAddress()",
+      "value": "0x51a0000000000000000000000000000000000001",
+      "matches_canonical": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "RevenueDistributor.daoRecipientAddress()",
+      "value": "0xda00000000000000000000000000000000000002",
+      "matches_canonical": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "ResultNotary.hasRole(NOTARIZER_ROLE)",
+      "account": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+      "has_role": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "ResultNotary.hasRole(DEFAULT_ADMIN_ROLE)",
+      "account": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+      "has_role": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "ReputationRegistry.resultNotary()",
+      "value": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+      "matches_canonical": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "ReputationRegistry.hasRole(REPUTATION_ORACLE_ROLE)",
+      "account": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+      "has_role": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "ReputationRegistry.hasRole(DEFAULT_ADMIN_ROLE)",
+      "account": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+      "has_role": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "AgentRegistry.owner()",
+      "value": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+      "matches_canonical": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "USDC.decimals()",
+      "value": 6,
+      "matches_canonical": true
+    },
+    {
+      "type": "LIVE \u2014 EXTERNAL CHAIN STATE READ",
+      "query": "USDC.symbol()",
+      "value": "USDC",
+      "matches_canonical": true
+    }
+  ]
+}

@@ -1,0 +1,168 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "phase": "6.15",
+  "title": "Phase 6.15 Controlled Live AWS KMS Attestation & Production Signer Verification Evidence",
+  "created_at": "2026-10-05T11:53:00Z",
+  "release_candidate": "1.1.0-rc1",
+  "release_fingerprint": "12d02ae0a6ffb65a84957af57574b35fdde78abf09b4abd69818ec937a9abce5",
+  "fingerprint_algorithm": "SHA-256 (canonical LF-normalized bytes of 55 security-critical release files sorted by path)",
+  "release_classification": "KMS ATTESTATION NOT EXECUTED\nOPERATOR ACTIVATION REQUIRED\nRELEASE CANDIDATE REMAINS FROZEN",
+  "aws_kms": {
+    "status": "NOT EXECUTED — OPERATOR ACTIVATION REQUIRED",
+    "classification": "NOT EXECUTED",
+    "exit_code": 2,
+    "reason": "Missing AWS_KMS_KEY_ARN and ambient credentials; fail-closed behavior verified",
+    "key_spec": "ECC_SECG_P256K1 (MANDATED / UNPROVISIONED IN CURRENT ENVIRONMENT)",
+    "key_usage": "SIGN_VERIFY (MANDATED / UNPROVISIONED IN CURRENT ENVIRONMENT)",
+    "key_state": "Enabled (MANDATED / UNPROVISIONED IN CURRENT ENVIRONMENT)",
+    "identity_binding": "UNASSIGNED — AWAITING OPERATOR PROVISIONING",
+    "sign_operation": "NOT EXECUTED — FAIL-CLOSED PREFLIGHT TRIGGERED",
+    "verify_operation": "NOT EXECUTED — FAIL-CLOSED PREFLIGHT TRIGGERED",
+    "message_type": "DIGEST (ENFORCED IN CODE)"
+  },
+  "production_signer": {
+    "status": "LOCAL SAFETY VERIFIED — FAIL-CLOSED ON UNPROVISIONED LIVE AWS KMS",
+    "local_test_results": {
+      "signer_suites_passed": 110,
+      "signer_suites_failed": 0,
+      "full_backend_passed": 587,
+      "full_backend_failed": 0
+    }
+  },
+  "mainnet": {
+    "chain_id": 8453,
+    "hard_blocked": true,
+    "transactions": 0,
+    "deployments": 0,
+    "programmatic_barriers_active": 5
+  },
+  "base_sepolia": {
+    "state_changing_transactions": 0
+  },
+  "aws_mutation_summary": {
+    "aws_resources_created": 0,
+    "aws_resources_modified": 0,
+    "aws_resources_deleted": 0,
+    "kms_keys_created_by_agentchain": 0,
+    "iam_policies_modified_by_agentchain": 0
+  },
+  "governance_status": {
+    "GATE-12 LIVE AWS KMS ATTESTATION": "NOT EXECUTED — OPERATOR ACTIVATION REQUIRED",
+    "GATE-13 PRODUCTION KMS CUSTODY": "BLOCKED — GOVERNANCE / INFRASTRUCTURE ACTIVATION REQUIRED",
+    "GATE-13B ROLE SEPARATION": "BLOCKED — NOT ASSIGNED",
+    "GATE-14 EXTERNAL AUDIT": "OPEN / PENDING EXTERNAL REVIEW",
+    "GATE-15 MAINNET GOVERNANCE": "BLOCKED",
+    "GATE-16 MAINNET DEPLOYMENT": "STRICTLY BLOCKED"
+  },
+  "evidence_taxonomy": {
+    "counts_by_category": {
+      "LIVE — EXTERNAL CHAIN TRANSACTION": 0,
+      "LIVE — EXTERNAL CHAIN STATE READ": 0,
+      "LIVE — EXTERNAL CHAIN STATE OBSERVATION": 0,
+      "LIVE — EXTERNAL AWS KMS ATTESTATION": 0,
+      "LOCAL — EXECUTED": 717,
+      "SIMULATED — BASE SEPOLIA STATE": 0,
+      "STATIC — INSPECTED": 16,
+      "NOT EXECUTED": 2
+    }
+  },
+  "evidence": [
+    {
+      "category": "NOT EXECUTED",
+      "command": ".venv/bin/python3 scripts/verify_phase_6_14_operator_prerequisites.py",
+      "exit_code": 2,
+      "output_summary": "STATUS: BLOCKED — OPERATOR INPUT REQUIRED. AWS_KMS_KEY_ARN not set. AWS credentials not detected.",
+      "verified_fail_closed": true
+    },
+    {
+      "category": "NOT EXECUTED",
+      "command": ".venv/bin/python3 scripts/verify_aws_kms_live.py",
+      "exit_code": 2,
+      "output_summary": "[FAIL-CLOSED] Live AWS KMS prerequisites unavailable: Missing AWS_KMS_KEY_ARN. LIVE AWS KMS VERIFICATION: NOT EXECUTED",
+      "verified_fail_closed": true
+    },
+    {
+      "category": "LOCAL — EXECUTED",
+      "command": ".venv/bin/pytest backend/tests/test_aws_kms_signer.py backend/tests/test_kms_operational_controls.py backend/tests/test_phase_6_10_production_signer_mainnet_safety.py backend/tests/test_production_readiness.py -v",
+      "exit_code": 0,
+      "tests_passed": 110,
+      "tests_failed": 0,
+      "verified": true
+    },
+    {
+      "category": "LOCAL — EXECUTED",
+      "command": ".venv/bin/python3 scripts/verify_production_safety_gates.py",
+      "exit_code": 0,
+      "gates_evaluated": 8,
+      "gates_passed": 8,
+      "verified": true
+    },
+    {
+      "category": "LOCAL — EXECUTED",
+      "command": "~/.foundry/bin/forge test --root contracts",
+      "exit_code": 0,
+      "contracts_tested": 12,
+      "tests_passed": 122,
+      "tests_failed": 0,
+      "invariant_runs": 256,
+      "invariant_calls": 128000,
+      "invariant_reverts": 0,
+      "verified": true
+    },
+    {
+      "category": "LOCAL — EXECUTED",
+      "command": ".venv/bin/pytest backend/tests/ -q",
+      "exit_code": 0,
+      "tests_passed": 587,
+      "tests_failed": 0,
+      "warnings": 13,
+      "verified": true
+    },
+    {
+      "category": "STATIC — INSPECTED",
+      "check": "Release Fingerprint Verification",
+      "command": ".venv/bin/python3 scripts/compute_release_fingerprint.py",
+      "fingerprint": "12d02ae0a6ffb65a84957af57574b35fdde78abf09b4abd69818ec937a9abce5",
+      "files_hashed": 55,
+      "status": "PASS"
+    },
+    {
+      "category": "STATIC — INSPECTED",
+      "check": "Authoritative Configuration Drift Scan",
+      "command": ".venv/bin/python3 scripts/check_config_drift.py",
+      "invariants_checked": 27,
+      "drift_detected": false,
+      "status": "PASS"
+    },
+    {
+      "category": "STATIC — INSPECTED",
+      "check": "Mainnet Hard Block Layer 1: contracts/script/Deploy.s.sol",
+      "content": "if (block.chainid == CHAIN_ID_BASE_MAINNET) revert MainnetDeploymentBlocked()",
+      "status": "PASS"
+    },
+    {
+      "category": "STATIC — INSPECTED",
+      "check": "Mainnet Hard Block Layer 2: backend/app/services/blockchain/config.py",
+      "content": "8453: ChainConfig(chain_id=8453, name='base-mainnet', allow_transactions=False)",
+      "status": "PASS"
+    },
+    {
+      "category": "STATIC — INSPECTED",
+      "check": "Mainnet Hard Block Layer 3: backend/app/services/blockchain/relayer.py",
+      "content": "if chain_id == 8453: raise ValueError('Base Mainnet execution is strictly disabled')",
+      "status": "PASS"
+    },
+    {
+      "category": "STATIC — INSPECTED",
+      "check": "Mainnet Hard Block Layer 4: backend/app/services/blockchain/signer.py",
+      "content": "if self._chain_id == 8453: raise ValueError('Mainnet signing is blocked')",
+      "status": "PASS"
+    },
+    {
+      "category": "STATIC — INSPECTED",
+      "check": "Mainnet Hard Block Layer 5: backend/app/core/production_config.py",
+      "content": "if self.BASE_MAINNET_SETTLEMENT_ENABLED: raise ValueError('Base Mainnet settlement disabled')",
+      "status": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,240 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "phase": "6.11",
+  "title": "Phase 6.11 Independent Security Audit Readiness & Production Release Freeze Evidence",
+  "created_at": "2026-10-04T02:22:00Z",
+  "evidence_taxonomy": {
+    "counts_by_category": {
+      "LIVE — EXTERNAL CHAIN TRANSACTION": 0,
+      "LIVE — EXTERNAL CHAIN STATE READ": 15,
+      "LIVE — EXTERNAL CHAIN STATE OBSERVATION": 2,
+      "LOCAL — EXECUTED": 255,
+      "SIMULATED — BASE SEPOLIA STATE": 0,
+      "STATIC — INSPECTED": 12,
+      "NOT EXECUTED": 2
+    }
+  },
+  "safety_rules_enforced": {
+    "base_mainnet_transactions": 0,
+    "base_sepolia_state_changing_transactions": 0,
+    "aws_infrastructure_modifications": 0,
+    "kms_keys_created_or_modified": 0,
+    "secrets_stored": 0,
+    "historical_hashes_altered": 0
+  },
+  "live_chain_observations": [
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE OBSERVATION",
+      "network": "Base Sepolia",
+      "method": "eth_chainId",
+      "endpoint": "https://sepolia.base.org",
+      "observed_value": 84532,
+      "expected_value": 84532,
+      "match": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE OBSERVATION",
+      "network": "Base Sepolia",
+      "method": "eth_blockNumber",
+      "endpoint": "https://sepolia.base.org",
+      "observed_value": 47646004,
+      "match": true
+    }
+  ],
+  "live_chain_state_reads": [
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "AgentRegistry",
+      "address": "0x96C3945e264A880EbaB5e95fDF786Fc18A4389B5",
+      "method": "eth_getCode",
+      "result": "2846 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "RevenueDistributor",
+      "address": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "method": "eth_getCode",
+      "result": "3793 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "Escrow",
+      "address": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "method": "eth_getCode",
+      "result": "8314 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ResultNotary",
+      "address": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+      "method": "eth_getCode",
+      "result": "2061 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ReputationRegistry",
+      "address": "0x423856529583F536d5dFaE80f7Bc142075c6Fc71",
+      "method": "eth_getCode",
+      "result": "3032 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "USDC",
+      "address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "method": "eth_getCode",
+      "result": "1798 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "Escrow",
+      "method": "paymentToken()",
+      "result": "0x036CbD53842c5426634e7929541eC2318f3dCF7e (Matches official Base Sepolia USDC)",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "Escrow",
+      "method": "distributor()",
+      "result": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "Escrow",
+      "method": "totalEscrowBalance()",
+      "result": "100000 base units (0.1 USDC)",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "RevenueDistributor",
+      "method": "authorizedEscrow()",
+      "result": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "RevenueDistributor",
+      "method": "stakerRecipientAddress()",
+      "result": "0x51a0000000000000000000000000000000000001",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "RevenueDistributor",
+      "method": "daoRecipientAddress()",
+      "result": "0xda00000000000000000000000000000000000002",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ResultNotary",
+      "method": "hasRole(NOTARIZER_ROLE, 0x473888C859F88D3De7b5A20986805b4dC3178189)",
+      "result": "true",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ReputationRegistry",
+      "method": "resultNotary()",
+      "result": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ReputationRegistry",
+      "method": "hasRole(REPUTATION_ORACLE_ROLE, 0x473888C859F88D3De7b5A20986805b4dC3178189)",
+      "result": "true",
+      "verified": true
+    }
+  ],
+  "local_executed_evidence": [
+    {
+      "category": "LOCAL — EXECUTED",
+      "suite": "Foundry Contract Invariant & Unit Tests",
+      "command": "~/.foundry/bin/forge test --root contracts",
+      "passed": 122,
+      "failed": 0,
+      "duration_cpu": "21.10s",
+      "invariant_calls": 128000
+    },
+    {
+      "category": "LOCAL — EXECUTED",
+      "suite": "Production Safety Gate Verification",
+      "command": ".venv/bin/python3 scripts/verify_production_safety_gates.py",
+      "checks_passed": 8,
+      "checks_failed": 0
+    },
+    {
+      "category": "LOCAL — EXECUTED",
+      "suite": "Configuration Drift Scanner",
+      "command": ".venv/bin/python3 scripts/check_config_drift.py",
+      "drift_count": 0
+    },
+    {
+      "category": "LOCAL — EXECUTED",
+      "suite": "Core Signer & Operational Controls Pytest",
+      "command": ".venv/bin/pytest backend/tests/test_aws_kms_signer.py backend/tests/test_kms_operational_controls.py backend/tests/test_phase_6_10_production_signer_mainnet_safety.py backend/tests/test_production_readiness.py",
+      "passed": 110,
+      "failed": 0
+    },
+    {
+      "category": "LOCAL — EXECUTED",
+      "suite": "Base Sepolia E2E Validation Pytest",
+      "command": ".venv/bin/pytest backend/tests/test_phase_6_9_base_sepolia_validation.py",
+      "passed": 16,
+      "failed": 0
+    },
+    {
+      "category": "LOCAL — EXECUTED",
+      "suite": "KMS Cryptographic Attestation Pytest",
+      "command": ".venv/bin/pytest backend/tests/test_phase_6_10_4_kms_attestation.py",
+      "passed": 7,
+      "failed": 0
+    }
+  ],
+  "static_inspected_evidence": [
+    {
+      "category": "STATIC — INSPECTED",
+      "target": "contracts/slither-output.json",
+      "result": "Slither 0.10.4 report inspected; zero high/critical vulnerabilities; all low/informational findings documented in docs/blockchain/SLITHER_ACCEPTED.md"
+    },
+    {
+      "category": "STATIC — INSPECTED",
+      "target": ".gitignore and .dockerignore",
+      "result": "Sensitive files (.env, *.key, *.pem, .dev_wallet.txt) strictly excluded from version control and image builds"
+    },
+    {
+      "category": "STATIC — INSPECTED",
+      "target": "contracts/src/Escrow.sol",
+      "result": "SafeERC20, ReentrancyGuard, AccessControl, and explicit state machine invariants verified"
+    },
+    {
+      "category": "STATIC — INSPECTED",
+      "target": "contracts/src/RevenueDistributor.sol",
+      "result": "85/10/5 exact integer arithmetic conservation invariant verified"
+    }
+  ],
+  "not_executed_evidence": [
+    {
+      "category": "NOT EXECUTED",
+      "target": "LIVE AWS KMS PROVIDER VERIFICATION",
+      "status": "NOT EXECUTED",
+      "command": ".venv/bin/python3 scripts/verify_aws_kms_live.py",
+      "exit_code": 2,
+      "reason": "Operator credentials for active AWS KMS HSM key pending out-of-band provisioning"
+    },
+    {
+      "category": "NOT EXECUTED",
+      "target": "BASE MAINNET TRANSACTION BROADCAST",
+      "status": "NOT EXECUTED",
+      "reason": "Strictly blocked by programmatic fail-closed gates across contracts, relayer, and configuration"
+    }
+  ]
+}

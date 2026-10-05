@@ -1,0 +1,73 @@
+{
+  "network": "Base Sepolia Testnet",
+  "chain_id": 84532,
+  "client_wallet": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+  "developer_wallet": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+  "contracts": {
+    "AgentRegistry": "0x96C3945e264A880EbaB5e95fDF786Fc18A4389B5",
+    "RevenueDistributor": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+    "Escrow": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+    "ResultNotary": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+    "ReputationRegistry": "0x423856529583F536d5dFaE80f7Bc142075c6Fc71",
+    "USDC": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+  },
+  "transactions": {
+    "agent_registration": {
+      "tx_hash": "0x4be5c5d0ca4cbd268c58d4f0e57eb102f85ea38d9220babdd3cfe8f0d12e5db0",
+      "block_number": 47553764,
+      "gas_used": 196197,
+      "metadata_uri": "https://agentchain.network/metadata/agent-f4cfd395be5c.json"
+    },
+    "usdc_approval": {
+      "tx_hash": "0x3535d1ffdfcad06943e1f767e2023b03838e6cdcb12dc3a48ad70798634a89e4",
+      "block_number": 47553766,
+      "gas_used": 46835,
+      "amount": 100000
+    },
+    "escrow_funding": {
+      "tx_hash": "0xc52c1cb55b0575584be54da6b86a61b92f819c591ae4cd876f348765e42a30f3",
+      "block_number": 47553913,
+      "gas_used": 277552,
+      "escrow_id": "0x8105904045b0eec81fb85125327f2aa4cb271a38ba6c96a3e2380d635417e7f5",
+      "amount": 100000
+    },
+    "confirmation_depth": {
+      "mined_block": 47553913,
+      "confirmed_block": 47554176,
+      "confirmation_depth": 263
+    },
+    "notarization": {
+      "tx_hash": "0x8e6ee40a065fc838c9a27959a6db786fabb2d36147dc7edf9426536c60cc33bf",
+      "block_number": 47554036,
+      "gas_used": 160734,
+      "execution_id": "a7285e41-cf01-488f-bd85-a6e55503ed6a",
+      "result_hash": "5ecc2c53e5e0e284bcf04b304b5b40198df5a10fa0f45234f9c4853628dcedd6"
+    },
+    "settlement_release": {
+      "tx_hash": "0x5354a2277fbb0bece9115fbf46fb4a20b594bec6b410dfc39dbaf3f702f3ca1f",
+      "block_number": 47554039,
+      "gas_used": 200198,
+      "escrow_id": "0x8105904045b0eec81fb85125327f2aa4cb271a38ba6c96a3e2380d635417e7f5",
+      "amount": 100000
+    },
+    "reputation_event": {
+      "tx_hash": "0xef8c0dae14d5cba508a76eb58cdf665f9ed16fca4fd89f443f88e64cfe9a1dc3",
+      "block_number": 47554043,
+      "gas_used": 223509,
+      "agent_id": "defff653-94b3-4a07-ba15-d9a69e92afe9",
+      "execution_id": "a7285e41-cf01-488f-bd85-a6e55503ed6a",
+      "outcome": "VERIFIED_SUCCESS"
+    }
+  },
+  "economic_reconciliation": {
+    "gross_amount": 100000,
+    "developer_delta": 85000,
+    "staker_delta": 10000,
+    "dao_delta": 5000,
+    "conservation_verified": true
+  },
+  "state_reconciliation": {},
+  "client_final_eth": "0.044930813253817047",
+  "client_final_usdc": 622988,
+  "total_eth_spent": "0"
+}

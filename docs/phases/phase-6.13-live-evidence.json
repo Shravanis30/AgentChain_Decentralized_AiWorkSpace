@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "phase": "6.13",
+  "title": "Phase 6.13 External Audit Execution, Findings Intake & Governance Reconciliation Evidence",
+  "created_at": "2026-10-05T08:31:00Z",
+  "classification": "AUDIT READY — EXTERNAL REVIEW STILL PENDING",
+  "release_candidate_version": "1.1.0-rc1",
+  "release_fingerprint": "12d02ae0a6ffb65a84957af57574b35fdde78abf09b4abd69818ec937a9abce5",
+  "fingerprint_algorithm": "SHA-256 (canonical LF-normalized bytes of 55 security-critical release files sorted by path)",
+  "evidence_taxonomy": {
+    "counts_by_category": {
+      "LIVE — EXTERNAL CHAIN TRANSACTION": 0,
+      "LIVE — EXTERNAL CHAIN STATE READ": 15,
+      "LIVE — EXTERNAL CHAIN STATE OBSERVATION": 2,
+      "LIVE — EXTERNAL AWS KMS ATTESTATION": 0,
+      "LOCAL — EXECUTED": 717,
+      "SIMULATED — BASE SEPOLIA STATE": 4,
+      "STATIC — INSPECTED": 15,
+      "NOT EXECUTED": 2
+    }
+  },
+  "safety_rules_enforced": {
+    "base_mainnet_transactions": 0,
+    "base_sepolia_state_changing_transactions": 0,
+    "aws_infrastructure_modifications": 0,
+    "kms_keys_created_or_modified": 0,
+    "iam_entities_modified": 0,
+    "secrets_stored_or_printed": 0,
+    "historical_hashes_altered": 0,
+    "deployed_contracts_altered": 0,
+    "escrow_economics_altered": 0,
+    "feature_development_started": 0
+  },
+  "external_audit": {
+    "status": "NOT RECEIVED / PENDING EXTERNAL REVIEW",
+    "artifacts_received": [],
+    "findings": [],
+    "dossier_provided": "docs/audit/AGENTCHAIN_EXTERNAL_AUDIT_PACKAGE.md",
+    "checklist_provided": "docs/audit/PHASE_6_12_EXTERNAL_AUDIT_HANDOFF_CHECKLIST.md"
+  },
+  "aws_kms": {
+    "attestation_status": "NOT EXECUTED",
+    "execution_classification": "NOT EXECUTED",
+    "exit_code": 2,
+    "reason": "Missing AWS_KMS_KEY_ARN and ambient AWS credentials in environment; fail-closed behavior verified"
+  },
+  "production_kms_custody": {
+    "status": "BLOCKED",
+    "reason": "Production key ARN and role separation pending multi-sig administrative assignment"
+  },
+  "mainnet": {
+    "chain_id": 8453,
+    "blocked": true,
+    "transactions": 0,
+    "deployments": 0,
+    "programmatic_barriers_active": 5
+  },
+  "evidence": [
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE OBSERVATION",
+      "network": "Base Sepolia",
+      "method": "eth_chainId",
+      "endpoint": "https://sepolia.base.org",
+      "observed_value": 84532,
+      "expected_value": 84532,
+      "match": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE OBSERVATION",
+      "network": "Base Sepolia",
+      "method": "eth_blockNumber",
+      "endpoint": "https://sepolia.base.org",
+      "observed_value": 47710187,
+      "match": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "AgentRegistry",
+      "address": "0x96C3945e264A880EbaB5e95fDF786Fc18A4389B5",
+      "method": "eth_getCode",
+      "result": "2846 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "RevenueDistributor",
+      "address": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "method": "eth_getCode",
+      "result": "3793 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "Escrow",
+      "address": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "method": "eth_getCode",
+      "result": "8314 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ResultNotary",
+      "address": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+      "method": "eth_getCode",
+      "result": "2061 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ReputationRegistry",
+      "address": "0x423856529583F536d5dFaE80f7Bc142075c6Fc71",
+      "method": "eth_getCode",
+      "result": "3032 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "USDC",
+      "address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "method": "eth_getCode",
+      "result": "1798 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "Escrow.paymentToken()",
+      "address": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "method": "eth_call",
+      "result": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "Escrow.distributor()",
+      "address": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "method": "eth_call",
+      "result": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "Escrow.totalEscrowBalance()",
+      "address": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "method": "eth_call",
+      "result": "100000",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "RevenueDistributor.paymentTokenContract()",
+      "address": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "method": "eth_call",
+      "result": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "RevenueDistributor.authorizedEscrow()",
+      "address": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "method": "eth_call",
+      "result": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "RevenueDistributor.stakerRecipientAddress()",
+      "address": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "method": "eth_call",
+      "result": "0x51a0000000000000000000000000000000000001",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "RevenueDistributor.daoRecipientAddress()",
+      "address": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "method": "eth_call",
+      "result": "0xda00000000000000000000000000000000000002",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ReputationRegistry.resultNotary()",
+      "address": "0x423856529583F536d5dFaE80f7Bc142075c6Fc71",
+      "method": "eth_call",
+      "result": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "AgentRegistry.owner()",
+      "address": "0x96C3945e264A880EbaB5e95fDF786Fc18A4389B5",
+      "method": "eth_call",
+      "result": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+      "verified": true
+    },
+    {
+      "category": "SIMULATED — BASE SEPOLIA STATE",
+      "description": "Self-payment guard revert simulation against Escrow.sol",
+      "error": "SelfPaymentNotAllowed(0x473888C859F88D3De7b5A20986805b4dC3178189)",
+      "verified": true
+    },
+    {
+      "category": "SIMULATED — BASE SEPOLIA STATE",
+      "description": "Duplicate notarization revert simulation against ResultNotary.sol",
+      "error": "AlreadyNotarized(bytes32)",
+      "verified": true
+    },
+    {
+      "category": "SIMULATED — BASE SEPOLIA STATE",
+      "description": "Duplicate reputation event revert simulation against ReputationRegistry.sol",
+      "error": "AlreadyRegistered(bytes32)",
+      "verified": true
+    },
+    {
+      "category": "SIMULATED — BASE SEPOLIA STATE",
+      "description": "Duplicate escrow release revert simulation against Escrow.sol",
+      "error": "InvalidEscrowState(bytes32,uint8)",
+      "verified": true
+    },
+    {
+      "category": "NOT EXECUTED",
+      "item": "Live AWS KMS Provider Attestation",
+      "status": "NOT EXECUTED — OPERATOR ACTIVATION REQUIRED",
+      "reason": "Missing AWS_KMS_KEY_ARN and ambient credentials; exit code 2 fail-closed"
+    },
+    {
+      "category": "NOT EXECUTED",
+      "item": "Production KMS Key Custody Provisioning",
+      "status": "BLOCKED — GOVERNANCE / INFRASTRUCTURE ACTIVATION REQUIRED",
+      "reason": "Pending multi-sig governance assignment and KMS ARN provisioning"
+    }
+  ],
+  "local_executions": {
+    "foundry_tests_passed": 122,
+    "foundry_invariants_passed": 256,
+    "pytest_tests_passed": 587,
+    "production_safety_gates_passed": 8,
+    "configuration_drift_scanner_passed": 1,
+    "base_sepolia_read_only_checks_passed": 21
+  }
+}

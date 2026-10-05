@@ -1,0 +1,192 @@
+{
+  "network": "Base Sepolia Testnet",
+  "chain_id": 84532,
+  "phase": "6.9.4",
+  "client_wallet": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+  "developer_wallet": "0x162dEB52f30f551020c23155Bc5c66419c184d82",
+  "contracts": {
+    "AgentRegistry": "0x96C3945e264A880EbaB5e95fDF786Fc18A4389B5",
+    "RevenueDistributor": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+    "Escrow": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+    "ResultNotary": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+    "ReputationRegistry": "0x423856529583F536d5dFaE80f7Bc142075c6Fc71",
+    "USDC": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+  },
+  "live_transaction_count": 5,
+  "live_transactions": {
+    "agent_registration": {
+      "evidence_classification": "LIVE — EXTERNAL CHAIN TRANSACTION",
+      "tx_hash": "0x21d4342e89713f0e21b4a1e5334d73290c681745b193a08af8f9d0a3502f2d1b",
+      "block_number": 47555019,
+      "gas_used": 218910,
+      "metadata_uri": "https://agentchain.network/metadata/multi-identity-agent-fcacd91d.json"
+    },
+    "escrow_funding": {
+      "evidence_classification": "LIVE — EXTERNAL CHAIN TRANSACTION",
+      "tx_hash": "0xd7608fbe0f16ddeaa953cfde6f5e466f1df5953ce1abc2e1e5853914fc07d031",
+      "block_number": 47555021,
+      "gas_used": 277552,
+      "escrow_id": "0x6bf30c8e0fa93e612faccf688c3fc65f7f9a7ac2add13a3bf89fc7cdd59c7d28",
+      "beneficiary": "0x162dEB52f30f551020c23155Bc5c66419c184d82",
+      "amount": 100000
+    },
+    "notarization": {
+      "evidence_classification": "LIVE — EXTERNAL CHAIN TRANSACTION",
+      "tx_hash": "0xd916bb5f13a0c7cdf382822eea5d3ee13d9e78b5d19d979e129f32cdd1536dbd",
+      "block_number": 47555222,
+      "gas_used": 153835,
+      "execution_id": "ffa7fc60-63da-4b1f-a831-60cee84e74a7",
+      "result_hash": "4821a2395b880cf251c43acca103959455ee5be02a80a6749b21a0dbb3b3037f"
+    },
+    "settlement_release": {
+      "evidence_classification": "LIVE — EXTERNAL CHAIN TRANSACTION",
+      "tx_hash": "0x1d681f66ecd9c9b2db2dd4f7f80eae38f247b79c481f23c47245b8d401850cb5",
+      "block_number": 47555252,
+      "gas_used": 183098,
+      "escrow_id": "0x6bf30c8e0fa93e612faccf688c3fc65f7f9a7ac2add13a3bf89fc7cdd59c7d28",
+      "amount": 100000
+    },
+    "reputation_event": {
+      "evidence_classification": "LIVE — EXTERNAL CHAIN TRANSACTION",
+      "tx_hash": "0xf701ad4ce6954889f287fb2346e660582a108f97566a920566fc22a4d9792ec1",
+      "block_number": 47555255,
+      "gas_used": 223509,
+      "agent_id": "fcacd91d-1205-4d78-b817-8d37bed9c4b4",
+      "execution_id": "ffa7fc60-63da-4b1f-a831-60cee84e74a7",
+      "outcome": "VERIFIED_SUCCESS"
+    }
+  },
+  "transactions": {
+    "agent_registration": {
+      "evidence_classification": "LIVE — EXTERNAL CHAIN TRANSACTION",
+      "tx_hash": "0x21d4342e89713f0e21b4a1e5334d73290c681745b193a08af8f9d0a3502f2d1b",
+      "block_number": 47555019,
+      "gas_used": 218910,
+      "metadata_uri": "https://agentchain.network/metadata/multi-identity-agent-fcacd91d.json"
+    },
+    "escrow_funding": {
+      "evidence_classification": "LIVE — EXTERNAL CHAIN TRANSACTION",
+      "tx_hash": "0xd7608fbe0f16ddeaa953cfde6f5e466f1df5953ce1abc2e1e5853914fc07d031",
+      "block_number": 47555021,
+      "gas_used": 277552,
+      "escrow_id": "0x6bf30c8e0fa93e612faccf688c3fc65f7f9a7ac2add13a3bf89fc7cdd59c7d28",
+      "beneficiary": "0x162dEB52f30f551020c23155Bc5c66419c184d82",
+      "amount": 100000
+    },
+    "notarization": {
+      "evidence_classification": "LIVE — EXTERNAL CHAIN TRANSACTION",
+      "tx_hash": "0xd916bb5f13a0c7cdf382822eea5d3ee13d9e78b5d19d979e129f32cdd1536dbd",
+      "block_number": 47555222,
+      "gas_used": 153835,
+      "execution_id": "ffa7fc60-63da-4b1f-a831-60cee84e74a7",
+      "result_hash": "4821a2395b880cf251c43acca103959455ee5be02a80a6749b21a0dbb3b3037f"
+    },
+    "settlement_release": {
+      "evidence_classification": "LIVE — EXTERNAL CHAIN TRANSACTION",
+      "tx_hash": "0x1d681f66ecd9c9b2db2dd4f7f80eae38f247b79c481f23c47245b8d401850cb5",
+      "block_number": 47555252,
+      "gas_used": 183098,
+      "escrow_id": "0x6bf30c8e0fa93e612faccf688c3fc65f7f9a7ac2add13a3bf89fc7cdd59c7d28",
+      "amount": 100000
+    },
+    "reputation_event": {
+      "evidence_classification": "LIVE — EXTERNAL CHAIN TRANSACTION",
+      "tx_hash": "0xf701ad4ce6954889f287fb2346e660582a108f97566a920566fc22a4d9792ec1",
+      "block_number": 47555255,
+      "gas_used": 223509,
+      "agent_id": "fcacd91d-1205-4d78-b817-8d37bed9c4b4",
+      "execution_id": "ffa7fc60-63da-4b1f-a831-60cee84e74a7",
+      "outcome": "VERIFIED_SUCCESS"
+    }
+  },
+  "chain_state_reads": {
+    "usdc_allowance_read": {
+      "evidence_classification": "LIVE — EXTERNAL CHAIN STATE READ",
+      "description": "Existing USDC allowance observed on-chain; no approval transaction was broadcast during this phase.",
+      "observation_block": 47555244,
+      "gas_used": 0,
+      "observed_allowance": "115792089237316195423570985008687907853269984665640564039457584007913129639935 (2^256 - 1)",
+      "required_amount": 100000
+    }
+  },
+  "chain_state_observations": {
+    "confirmation_observation": {
+      "evidence_classification": "LIVE — EXTERNAL CHAIN STATE OBSERVATION",
+      "description": "32-block confirmation requirement verified separately through live chain-head observation.",
+      "funding_transaction_block": 47555021,
+      "observed_head": 47555249,
+      "observed_depth": 228,
+      "required_depth": 32,
+      "depth_condition_satisfied": "228 >= 32",
+      "verified_canonical": true
+    }
+  },
+  "simulations": {
+    "self_payment_guard_test": {
+      "evidence_classification": "SIMULATED — BASE SEPOLIA STATE",
+      "description": "Non-destructive eth_call simulating self-payment revert against deployed Escrow contract",
+      "caller": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+      "beneficiary": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+      "error": "SelfPaymentNotAllowed(0x473888C859F88D3De7b5A20986805b4dC3178189)",
+      "selector": "0x60ef2d64",
+      "verified": true
+    },
+    "replay_protection_tests": {
+      "evidence_classification": "SIMULATED — BASE SEPOLIA STATE",
+      "description": "Replay-protection checks were simulated against the deployed Base Sepolia contract state; no duplicate state-mutating transaction was intentionally mined.",
+      "duplicate_notarization": {
+        "error": "AlreadyNotarized(bytes32)",
+        "selector": "0x37f5e398"
+      },
+      "duplicate_reputation_registration": {
+        "error": "AlreadyRegistered(bytes32)",
+        "selector": "0x51c7263c"
+      },
+      "duplicate_escrow_release": {
+        "error": "InvalidEscrowState(bytes32,uint8)",
+        "selector": "0x33e00e36"
+      }
+    }
+  },
+  "economic_reconciliation": {
+    "gross_amount": 100000,
+    "developer_recipient": "0x162dEB52f30f551020c23155Bc5c66419c184d82",
+    "developer_delta": 85000,
+    "staker_recipient": "0x51a0000000000000000000000000000000000001",
+    "staker_delta": 10000,
+    "dao_recipient": "0xda00000000000000000000000000000000000002",
+    "dao_delta": 5000,
+    "conservation_verified": true
+  },
+  "accounting": {
+    "client_eth_start": "0.044920932273401962",
+    "client_usdc_start": 522988,
+    "dev_usdc_start": 0,
+    "staker_usdc_start": 10000,
+    "dao_usdc_start": 5000,
+    "client_eth_end": "0.044914817065198176",
+    "client_eth_spent_gas": "0.000006115208203786",
+    "client_usdc_end": 522988,
+    "client_usdc_spent": 0,
+    "dev_usdc_end": 85000,
+    "staker_usdc_end": 20000,
+    "dao_usdc_end": 10000
+  },
+  "self_payment_guard_details": {
+    "evidence_classification": "SIMULATED — BASE SEPOLIA STATE",
+    "caller": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+    "beneficiary": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+    "error": "SelfPaymentNotAllowed(0x473888C859F88D3De7b5A20986805b4dC3178189)",
+    "selector": "0x60ef2d64"
+  },
+  "confirmation_observation": {
+    "evidence_classification": "LIVE — EXTERNAL CHAIN STATE OBSERVATION",
+    "funding_transaction_block": 47555021,
+    "mined_block": 47555021,
+    "confirmed_block": 47555249,
+    "confirmation_depth": 228,
+    "required_depth": 32,
+    "depth_condition_satisfied": "228 >= 32",
+    "verified_canonical": true
+  }
+}

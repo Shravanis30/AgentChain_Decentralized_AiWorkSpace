@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "phase": "6.11.1",
+  "title": "Phase 6.11.1 Security Findings Remediation & Audit Baseline Hardening Evidence",
+  "created_at": "2026-10-05T03:22:00Z",
+  "evidence_taxonomy": {
+    "counts_by_category": {
+      "LIVE — EXTERNAL CHAIN TRANSACTION": 0,
+      "LIVE — EXTERNAL CHAIN STATE READ": 15,
+      "LIVE — EXTERNAL CHAIN STATE OBSERVATION": 2,
+      "LOCAL — EXECUTED": 720,
+      "SIMULATED — BASE SEPOLIA STATE": 0,
+      "STATIC — INSPECTED": 12,
+      "NOT EXECUTED": 2
+    }
+  },
+  "safety_rules_enforced": {
+    "base_mainnet_transactions": 0,
+    "base_sepolia_state_changing_transactions": 0,
+    "aws_infrastructure_modifications": 0,
+    "kms_keys_created_or_modified": 0,
+    "secrets_stored": 0,
+    "historical_hashes_altered": 0
+  },
+  "live_chain_observations": [
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE OBSERVATION",
+      "network": "Base Sepolia",
+      "method": "eth_chainId",
+      "endpoint": "https://sepolia.base.org",
+      "observed_value": 84532,
+      "expected_value": 84532,
+      "match": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE OBSERVATION",
+      "network": "Base Sepolia",
+      "method": "eth_blockNumber",
+      "endpoint": "https://sepolia.base.org",
+      "observed_value": 47700969,
+      "match": true
+    }
+  ],
+  "live_chain_state_reads": [
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "AgentRegistry",
+      "address": "0x96C3945e264A880EbaB5e95fDF786Fc18A4389B5",
+      "method": "eth_getCode",
+      "result": "2846 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "RevenueDistributor",
+      "address": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "method": "eth_getCode",
+      "result": "3793 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "Escrow",
+      "address": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "method": "eth_getCode",
+      "result": "8314 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ResultNotary",
+      "address": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+      "method": "eth_getCode",
+      "result": "2061 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ReputationRegistry",
+      "address": "0x423856529583F536d5dFaE80f7Bc142075c6Fc71",
+      "method": "eth_getCode",
+      "result": "3032 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "USDC",
+      "address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "method": "eth_getCode",
+      "result": "1798 bytes present",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "Escrow.paymentToken()",
+      "address": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "method": "eth_call",
+      "result": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "Escrow.distributor()",
+      "address": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "method": "eth_call",
+      "result": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "Escrow.totalEscrowBalance()",
+      "address": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "method": "eth_call",
+      "result": "100000",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "RevenueDistributor.paymentTokenContract()",
+      "address": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "method": "eth_call",
+      "result": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "RevenueDistributor.authorizedEscrow()",
+      "address": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "method": "eth_call",
+      "result": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ResultNotary: operator role",
+      "address": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+      "method": "eth_call",
+      "result": "hasAdmin=True, hasNotarizer=True",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ReputationRegistry.resultNotary()",
+      "address": "0x423856529583F536d5dFaE80f7Bc142075c6Fc71",
+      "method": "eth_call",
+      "result": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "ReputationRegistry: operator role",
+      "address": "0x423856529583F536d5dFaE80f7Bc142075c6Fc71",
+      "method": "eth_call",
+      "result": "hasAdmin=True, hasOracle=True",
+      "verified": true
+    },
+    {
+      "category": "LIVE — EXTERNAL CHAIN STATE READ",
+      "target": "USDC.symbol()",
+      "address": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "method": "eth_call",
+      "result": "USDC, decimals: 6",
+      "verified": true
+    }
+  ],
+  "local_executed_remediations": [
+    {
+      "finding_id": "SEC-6.11-002",
+      "category": "LOCAL — EXECUTED",
+      "component": "Anvil Test Seeding Automation",
+      "action": "Implemented backend/tests/anvil_bootstrap.py with chain_id 31337 hard guard; implemented backend/tests/test_anvil_bootstrap.py",
+      "result": "11/11 tests passed; Anvil restart, reset, unseeded detection, bootstrap, and contract verification validated reproducibly"
+    },
+    {
+      "finding_id": "SEC-6.11-003",
+      "category": "LOCAL — EXECUTED",
+      "component": "Redis Test Stream Isolation",
+      "action": "Killed rogue worker PID 4829, increased socket timeouts to 5.0s, hardened conftest.py cleanup fixture across all redis keyspaces",
+      "result": "13/13 passed 3 consecutive times across test_queue_recovery.py, test_orchestration_engine.py, test_cancellation.py"
+    },
+    {
+      "finding_id": "SEC-6.11-007",
+      "category": "LOCAL — EXECUTED",
+      "component": "Starlette HTTP 422 Deprecation",
+      "action": "Replaced status.HTTP_422_UNPROCESSABLE_ENTITY with status.HTTP_422_UNPROCESSABLE_CONTENT across backend",
+      "result": "Zero remaining occurrences in backend/app; all API tests pass without StarletteDeprecationWarning"
+    },
+    {
+      "finding_id": "SEC-6.11-010",
+      "category": "LOCAL — EXECUTED",
+      "component": "LangGraph Checkpoint Serialization",
+      "action": "Evaluated allowed_objects parameter; filtered warning in pyproject.toml; verified RFC 8785 canonical JSON serialization",
+      "result": "5/5 orchestration engine and 6/6 durable wakeup tests pass cleanly"
+    },
+    {
+      "finding_id": "RELEASE-FINGERPRINT",
+      "category": "LOCAL — EXECUTED",
+      "component": "Release Fingerprint Tool",
+      "action": "Created scripts/compute_release_fingerprint.py; computed LF-normalized SHA-256 over 55 canonical release source files",
+      "result": "12d02ae0a6ffb65a84957af57574b35fdde78abf09b4abd69818ec937a9abce5 (reproducible from clean checkout)"
+    }
+  ],
+  "not_executed_items": [
+    {
+      "finding_id": "SEC-6.11-001",
+      "category": "NOT EXECUTED",
+      "component": "Live AWS KMS Provider Verification",
+      "reason": "AWS_KMS_KEY_ARN and AWS credentials unavailable in local test environment; fail-closed behavior verified"
+    },
+    {
+      "finding_id": "PROD-CUSTODY",
+      "category": "NOT EXECUTED",
+      "component": "Production KMS Key Custody Provisioning",
+      "reason": "Production hardware key ARN assignment deferred to multi-sig administrative custody"
+    }
+  ]
+}

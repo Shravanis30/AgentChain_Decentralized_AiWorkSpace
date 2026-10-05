@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "phase": "6.11.1",
+  "title": "AgentChain Production Release Candidate Manifest & Freeze",
+  "manifest_version": "1.1.0",
+  "created_at": "2026-10-04T02:20:00Z",
+  "updated_at": "2026-10-05T03:21:00Z",
+  "release_status": "RELEASE CANDIDATE FROZEN / AUDIT READY WITH FINDINGS REMEDIATED",
+  "feature_freeze": true,
+  "git_state": "workspace generated / git working tree modified (no git commits created; rev-parse HEAD is uncommitted)",
+  "git_commit": null,
+  "git_tag": null,
+  "database_schema_version": "019_marketplace_lifecycle",
+  "configuration_fingerprint": "12d02ae0a6ffb65a84957af57574b35fdde78abf09b4abd69818ec937a9abce5",
+  "fingerprint_algorithm": "SHA-256 (canonical LF-normalized bytes of 55 security-critical release files sorted by path)",
+  "chain_ids": {
+    "local_anvil": 31337,
+    "base_sepolia": 84532,
+    "base_mainnet": 8453
+  },
+  "usdc_address": {
+    "base_sepolia": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "base_mainnet": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
+  },
+  "contracts": [
+    "AgentRegistry",
+    "Escrow",
+    "RevenueDistributor",
+    "ResultNotary",
+    "ReputationRegistry"
+  ],
+  "contract_addresses": {
+    "base_sepolia": {
+      "AgentRegistry": "0x96C3945e264A880EbaB5e95fDF786Fc18A4389B5",
+      "RevenueDistributor": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "Escrow": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "ResultNotary": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+      "ReputationRegistry": "0x423856529583F536d5dFaE80f7Bc142075c6Fc71",
+      "USDC": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+    },
+    "anvil": {
+      "AgentRegistry": "0x19ceccd6942ad38562ee10bafd44776ceb67e923",
+      "RevenueDistributor": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "Escrow": "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
+      "ResultNotary": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
+      "ReputationRegistry": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+      "USDC": "0x5FbDB2315678afecb367f032d93F642f64180aa3"
+    },
+    "base_mainnet": {
+      "AgentRegistry": "0x0000000000000000000000000000000000000000",
+      "RevenueDistributor": "0x0000000000000000000000000000000000000000",
+      "Escrow": "0x0000000000000000000000000000000000000000",
+      "ResultNotary": "0x0000000000000000000000000000000000000000",
+      "ReputationRegistry": "0x0000000000000000000000000000000000000000",
+      "USDC": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+      "status": "STRICTLY BLOCKED"
+    }
+  },
+  "signer_architecture": {
+    "production_signer_type": "AwsKmsSigner",
+    "key_spec": "ECC_SECG_P256K1",
+    "key_usage": "SIGN_VERIFY",
+    "hardware_security_level": "FIPS 140-2 Level 3 HSM",
+    "testnet_signer_type": "LocalAccountSigner (Restricted to 31337 & 84532)",
+    "active_testnet_operator": "0x473888C859F88D3De7b5A20986805b4dC3178189",
+    "production_kms_operator": "PENDING OPERATOR ACTIVATION"
+  },
+  "test_summary": {
+    "foundry": {
+      "test_suites": 7,
+      "tests_passed": 122,
+      "tests_failed": 0,
+      "tests_skipped": 0,
+      "invariant_runs": 256,
+      "invariant_calls": 128000,
+      "invariant_reverts": 0
+    },
+    "core_pytest_suites": {
+      "tests_passed": 110,
+      "tests_failed": 0,
+      "suites": [
+        "test_aws_kms_signer.py",
+        "test_kms_operational_controls.py",
+        "test_phase_6_10_production_signer_mainnet_safety.py",
+        "test_production_readiness.py"
+      ]
+    },
+    "base_sepolia_e2e_validation": {
+      "tests_passed": 16,
+      "tests_failed": 0,
+      "suite": "test_phase_6_9_base_sepolia_validation.py"
+    },
+    "kms_attestation_suite": {
+      "tests_passed": 7,
+      "tests_failed": 0,
+      "suite": "test_phase_6_10_4_kms_attestation.py"
+    },
+    "full_repository_tests": {
+      "total_tests_collected": 587,
+      "tests_passed": 587,
+      "tests_failed": 0,
+      "cataloged_findings_remediated": [
+        "SEC-6.11-002: Anvil ephemeral state automated via deterministic bootstrap",
+        "SEC-6.11-003: Redis stream test contention eliminated via process isolation and fixture cleanup",
+        "SEC-6.11-007: Starlette HTTP 422 constant updated to HTTP_422_UNPROCESSABLE_CONTENT",
+        "SEC-6.11-010: LangGraph serializer warning explicitly handled and filtered"
+      ]
+    }
+  },
+  "security_gate_summary": {
+    "total_gates": 8,
+    "gates_passed": 8,
+    "gates_failed": 0,
+    "status": "ALL PRODUCTION SAFETY GATES PASSED (8/8)",
+    "checks": [
+      "Secret Scanning: Git Tracked Files",
+      "Git & Docker Hardening: Ignored Files Verification",
+      "Mainnet Hard Block: Smart Contract Guard",
+      "Mainnet Hard Block: Relayer & Startup Guard",
+      "Mainnet Hard Block: Signer Abstraction Guard",
+      "Production Signer Abstraction: Fail-Closed Provider Boundaries",
+      "Role Separation & Anvil Default Account Guard",
+      "Production Configuration Model & Invariants"
+    ]
+  },
+  "configuration_drift": {
+    "cross_layer_drift_detected": false,
+    "status": "SUCCESS: Zero configuration drift detected"
+  },
+  "known_blockers": [
+    {
+      "gate": "LIVE AWS KMS PROVIDER VERIFICATION",
+      "status": "NOT EXECUTED",
+      "reason": "Operator credentials for active AWS KMS HSM key pending out-of-band provisioning"
+    },
+    {
+      "gate": "PRODUCTION KMS KEY CUSTODY",
+      "status": "PENDING OPERATOR ACTIVATION",
+      "reason": "Production key ARN and role address pending multi-sig administrative assignment"
+    },
+    {
+      "gate": "BASE MAINNET DEPLOYMENT & SETTLEMENT",
+      "status": "STRICTLY BLOCKED",
+      "reason": "Hard-coded programmatic blocks enforced in contracts, relayer, and configuration"
+    }
+  ]
+}

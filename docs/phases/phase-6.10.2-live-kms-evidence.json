@@ -1,0 +1,76 @@
+{
+  "phase": "PHASE 6.10.2 — OPERATOR-CONTROLLED LIVE AWS KMS VERIFICATION",
+  "release_classification": "PARTIAL — KMS IMPLEMENTATION VERIFIED LOCALLY; LIVE KMS PROVIDER VERIFICATION PENDING",
+  "aws_kms_provider": {
+    "provider_availability": "PREREQUISITES_MISSING",
+    "status": "NOT EXECUTED",
+    "key_spec": "ECC_SECG_P256K1",
+    "key_usage": "SIGN_VERIFY",
+    "key_state": "Enabled",
+    "signing_algorithm": "ECDSA_SHA_256",
+    "derived_address": null,
+    "expected_address_match": null,
+    "digest_verification_result": "NOT EXECUTED",
+    "signature_verification_result": "NOT EXECUTED",
+    "recovery_verification_result": "NOT EXECUTED",
+    "kms_verify_api_result": "NOT EXECUTED",
+    "operator_requirements": {
+      "AWS_KMS_KEY_ARN": "Required (operator-supplied existing KMS key ARN)",
+      "AWS_REGION": "Required (e.g. us-east-1)",
+      "EXPECTED_SIGNER_ADDRESS": "Required (checksummed Ethereum address)",
+      "boto3_credential_provider_chain": "Required (ambient IAM role, AWS profile, or SSO session)"
+    }
+  },
+  "blockchain": {
+    "network": "Base Sepolia",
+    "chain_id": 84532,
+    "latest_block_observed": 47593318,
+    "state_changing_transactions": 0,
+    "mainnet_transactions": 0,
+    "total_blockchain_transactions": 0,
+    "evidence_taxonomy": {
+      "LIVE — EXTERNAL CHAIN TRANSACTION": 0,
+      "LIVE — EXTERNAL CHAIN STATE READ": 21,
+      "LIVE — EXTERNAL CHAIN STATE OBSERVATION": 2
+    },
+    "canonical_contracts": {
+      "AgentRegistry": "0x96C3945e264A880EbaB5e95fDF786Fc18A4389B5",
+      "RevenueDistributor": "0x2F2d5Cc40e2C4C32cC86BC5127c2833a7784ee1c",
+      "Escrow": "0x3e5C09D2123cA106b2E24C4f76bFad4a022640D1",
+      "ResultNotary": "0xed58B4E37f81dFbD08c3d2DeF613286bC8Cf8056",
+      "ReputationRegistry": "0x423856529583F536d5dFaE80f7Bc142075c6Fc71",
+      "USDC": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+    }
+  },
+  "local_execution": {
+    "classification": "LOCAL — EXECUTED",
+    "tests_executed": 210,
+    "breakdown": {
+      "test_aws_kms_signer": 43,
+      "test_phase_6_10_production_signer_mainnet_safety": 21,
+      "test_production_readiness": 24,
+      "foundry_contracts_suite": 122
+    },
+    "all_passed": true
+  },
+  "simulations": {
+    "classification": "SIMULATED — BASE SEPOLIA STATE",
+    "count": 0
+  },
+  "static_inspection": {
+    "classification": "STATIC — INSPECTED",
+    "production_safety_gates": {
+      "passed": 8,
+      "failed": 0
+    },
+    "config_drift_scanner": {
+      "status": "PASS",
+      "drift_detected": false
+    }
+  },
+  "not_executed": {
+    "classification": "NOT EXECUTED",
+    "item": "Live AWS KMS API call (DescribeKey, GetPublicKey, Sign, Verify)",
+    "reason": "AWS_KMS_KEY_ARN and ambient AWS credentials were not provided in operator environment. In accordance with safety rules, no cloud infrastructure or keys were automatically provisioned."
+  }
+}
