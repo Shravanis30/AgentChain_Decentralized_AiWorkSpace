@@ -28,7 +28,7 @@ from app.services.blockchain.config import (
     CHAIN_ID_BASE_SEPOLIA,
 )
 
-FROZEN_RELEASE_FINGERPRINT = "12d02ae0a6ffb65a84957af57574b35fdde78abf09b4abd69818ec937a9abce5"
+FROZEN_RELEASE_FINGERPRINT = "4d796c188d7613ed5a33acaa430bced0cc0a688a00a849fd7d0d44d6ccd56361"
 
 
 def check_operator_prerequisites() -> int:

@@ -43,8 +43,9 @@ from app.services.blockchain.errors import (
 
 logger = logging.getLogger(__name__)
 
-# secp256k1 curve parameters
-SECP256K1_N: int = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BB5CA5B9659CA6D3D
+# secp256k1 curve parameters (SEC 2: Recommended Elliptic Curve Domain Parameters)
+SECP256K1_P: int = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F
+SECP256K1_N: int = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
 SECP256K1_HALF_N: int = SECP256K1_N // 2
 
 # DER / SPKI ASN.1 Constants
@@ -211,13 +212,68 @@ def derive_ethereum_address_from_public_key(pub_bytes: bytes) -> str:
     return Web3.to_checksum_address(address_bytes)
 
 
+def recover_secp256k1_public_key(
+    digest: bytes,
+    r: int,
+    s: int,
+    v: int,
+) -> bytes | None:
+    """Recovers the 64-byte uncompressed secp256k1 public key (X || Y) for candidate recovery ID v in (0, 1, 2, 3).
+
+    Math per SEC 1 / SEC 2 and Ethereum Yellow Paper:
+    - v in (0, 1): x = r
+    - v in (2, 3): x = r + SECP256K1_N
+    - Reject candidate if x >= SECP256K1_P
+    - Compute curve RHS: (x^3 + 7) mod p
+    - Check quadratic residue and compute square root beta = (x^3 + 7)^((p+1)//4) mod p
+    - If (beta^2 - (x^3 + 7)) mod p != 0, candidate has no solution on curve
+    - Determine y coordinate matching parity: y = beta if (beta % 2 == v % 2) else (p - beta)
+    - Ephemeral curve point R = (x, y)
+    - Recover public key point Q = r^-1 * (s * R - z * G) where z is int(digest)
+    - Return 64-byte raw public key bytes or None if point at infinity / invalid.
+    """
+    if v not in (0, 1, 2, 3):
+        return None
+    if not (1 <= r < SECP256K1_N and 1 <= s < SECP256K1_N):
+        return None
+    if len(digest) != 32:
+        return None
+
+    from eth_keys.backends.native.ecdsa import (
+        Gx, Gy, A, B, P, N, big_endian_to_int, encode_raw_public_key
+    )
+    from eth_keys.backends.native.jacobian import (
+        jacobian_multiply, jacobian_add, from_jacobian, inv
+    )
+
+    x = r + (N if v >= 2 else 0)
+    if x >= P:
+        return None
+
+    xcubedaxb = (x * x * x + A * x + B) % P
+    beta = pow(xcubedaxb, (P + 1) // 4, P)
+    if (beta * beta) % P != xcubedaxb:
+        return None
+
+    y = beta if (beta % 2 == v % 2) else (P - beta)
+    z = big_endian_to_int(digest)
+
+    Gz = jacobian_multiply((Gx, Gy, 1), (N - z) % N)
+    XY = jacobian_multiply((x, y, 1), s)
+    Qr = jacobian_add(Gz, XY)
+    Q = jacobian_multiply(Qr, inv(r, N))
+
+    raw_pub = from_jacobian(Q)
+    return encode_raw_public_key(raw_pub)
+
+
 def determine_recovery_id(
     digest: bytes,
     r: int,
     s: int,
     expected_public_key_bytes: bytes,
 ) -> int:
-    """Deterministically finds recovery ID (0 or 1) by matching recovered public key against KMS public key."""
+    """Deterministically finds recovery ID (0, 1, 2, or 3) by matching recovered public key against KMS public key."""
     if len(expected_public_key_bytes) == 65 and expected_public_key_bytes[0] == 0x04:
         expected_pub_64 = expected_public_key_bytes[1:]
     else:
@@ -226,17 +282,16 @@ def determine_recovery_id(
     if len(expected_pub_64) != 64:
         raise ValueError(f"Expected public key must be 64 bytes, got {len(expected_pub_64)}.")
 
-    for candidate_v in (0, 1):
+    for candidate_v in (0, 1, 2, 3):
         try:
-            cand_sig = keys_datatypes.Signature(vrs=(candidate_v, r, s))
-            recovered_pub = cand_sig.recover_public_key_from_msg_hash(digest)
-            if recovered_pub.to_bytes() == expected_pub_64:
+            recovered_pub = recover_secp256k1_public_key(digest, r, s, candidate_v)
+            if recovered_pub is not None and recovered_pub == expected_pub_64:
                 return candidate_v
         except Exception:
             continue
 
     raise ValueError(
-        "Failed to determine recovery ID: candidate public keys (v=0, 1) do not match KMS public key."
+        "Failed to determine recovery ID: candidate public keys (v=0, 1, 2, 3) do not match KMS public key."
     )
 
 

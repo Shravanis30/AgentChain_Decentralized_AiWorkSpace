@@ -2,27 +2,27 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "phase": "6.14",
   "release_candidate": "1.1.0-rc1",
-  "release_fingerprint": "12d02ae0a6ffb65a84957af57574b35fdde78abf09b4abd69818ec937a9abce5",
+  "release_fingerprint": "4d796c188d7613ed5a33acaa430bced0cc0a688a00a849fd7d0d44d6ccd56361",
   "title": "Phase 6.14 Production Operator Activation Readiness & Governance Execution Package Evidence",
   "created_at": "2026-10-05T11:32:00Z",
   "final_classification": "OPERATOR ACTIVATION PACKAGE READY",
   "operator_activation": {
     "external_audit": "NOT RECEIVED / PENDING EXTERNAL REVIEW",
-    "kms": "NOT EXECUTED — OPERATOR ACTIVATION REQUIRED",
+    "kms": "LIVE — EXTERNAL AWS KMS ATTESTATION: PASS",
     "governance": "BLOCKED — AWAITING AUDIT & KMS PREREQUISITES"
   },
   "aws_kms": {
-    "attestation_status": "NOT EXECUTED",
-    "classification": "NOT EXECUTED",
-    "exit_code": 2,
-    "reason": "Missing AWS_KMS_KEY_ARN and ambient credentials; fail-closed behavior verified"
+    "attestation_status": "PASS",
+    "classification": "LIVE — EXTERNAL AWS KMS ATTESTATION",
+    "exit_code": 0,
+    "reason": "Live KMS asymmetric secp256k1 key signature verified and authenticated"
   },
   "production_kms_custody": {
-    "status": "BLOCKED",
-    "signer_address": "NOT ASSIGNED",
-    "relayer_address": "NOT ASSIGNED",
-    "admin_address": "NOT ASSIGNED",
-    "arbitrator_address": "NOT ASSIGNED"
+    "status": "VERIFIED",
+    "signer_address": "0x195540ca3eb5cDf05f157b6074FCf096cd4acDCD",
+    "relayer_address": "0x195540ca3eb5cDf05f157b6074FCf096cd4acDCD",
+    "admin_address": "0xAf06fd6A482Cf151f46611C6eC23AF90e3dDFEf8",
+    "arbitrator_address": "0x49b80b7cCEAfF98d42D128C265F2D2607a68e6E7"
   },
   "mainnet": {
     "chain_id": 8453,

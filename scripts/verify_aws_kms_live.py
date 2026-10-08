@@ -53,6 +53,7 @@ from app.services.blockchain.signer import (
     derive_ethereum_address_from_public_key,
     determine_recovery_id,
     extract_uncompressed_public_key_from_spki,
+    recover_secp256k1_public_key,
 )
 
 
@@ -158,7 +159,10 @@ def verify_live_kms(key_arn: str, region: str, expected_address: str | None) -> 
         print("   [INFO] No EXPECTED_SIGNER_ADDRESS provided for strict identity binding comparison.")
 
     print(f"\n3. Signing Deterministic Test Digest (Sign)...")
-    print(f"   Digest (Keccak-256): 0x{DETERMINISTIC_DIGEST.hex()}")
+    digest_hex = DETERMINISTIC_DIGEST.hex()
+    if not digest_hex.startswith("0x"):
+        digest_hex = "0x" + digest_hex
+    print(f"   Digest (Keccak-256): {digest_hex}")
     print("   MessageType: DIGEST (no double-hashing)")
     print("   SigningAlgorithm: ECDSA_SHA_256")
 
@@ -187,15 +191,15 @@ def verify_live_kms(key_arn: str, region: str, expected_address: str | None) -> 
     else:
         print("   [PASS] Signature was already canonical low-S")
 
-    # Deterministic recovery-ID determination
+    # Deterministic recovery-ID determination (0, 1, 2, or 3)
     rec_id = determine_recovery_id(DETERMINISTIC_DIGEST, r, s, uncompressed_pub[1:])
     print(f"   Determined Recovery ID (v): {rec_id}")
 
-    # Cryptographic recovery check
-    from eth_keys import datatypes as keys_datatypes
-    cand_sig = keys_datatypes.Signature(vrs=(rec_id, r, s))
-    recovered_pub = cand_sig.recover_public_key_from_msg_hash(DETERMINISTIC_DIGEST)
-    recovered_addr = Web3.to_checksum_address(Web3.keccak(recovered_pub.to_bytes())[-20:])
+    # Cryptographic recovery check against exact AWS KMS public key
+    recovered_pub_bytes = recover_secp256k1_public_key(DETERMINISTIC_DIGEST, r, s, rec_id)
+    if recovered_pub_bytes is None or recovered_pub_bytes != uncompressed_pub[1:]:
+        raise ValueError(f"Recovered public key does not match KMS public key for v={rec_id}")
+    recovered_addr = Web3.to_checksum_address(Web3.keccak(recovered_pub_bytes)[-20:])
 
     if recovered_addr.lower() != derived_address.lower():
         raise ValueError(f"Recovered address {recovered_addr} does not match KMS address {derived_address}")
@@ -216,7 +220,7 @@ def verify_live_kms(key_arn: str, region: str, expected_address: str | None) -> 
     print("   [PASS] AWS KMS Verify confirmed signature is valid.")
 
     results["cryptographic_verification"] = {
-        "digest": "0x" + DETERMINISTIC_DIGEST.hex(),
+        "digest": digest_hex,
         "der_signature_length": len(raw_signature),
         "original_s_was_high": original_s_was_high,
         "normalized_s_low": s <= SECP256K1_HALF_N,
