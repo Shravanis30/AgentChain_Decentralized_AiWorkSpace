@@ -17,7 +17,7 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-[50vh] flex flex-col items-center justify-center space-y-4">
+      <div className="min-h-[50vh] flex flex-col items-center justify-center space-y-4 px-4">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
         <p className="text-sm text-muted-foreground">Verifying authentication session...</p>
       </div>
@@ -26,14 +26,14 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
 
   if (!isAuthenticated || !user) {
     return (
-      <div className="max-w-md mx-auto my-16 px-4">
+      <div className="max-w-md mx-auto my-8 sm:my-16 px-4">
         <Card className="border-border bg-card shadow-lg text-center">
           <CardHeader className="space-y-2">
             <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto text-primary">
               <KeyRound className="w-6 h-6" />
             </div>
-            <CardTitle className="text-xl">Authentication Required</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-lg sm:text-xl font-bold">Authentication Required</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">
               This section of AgentChain requires a verified Sign-In with Ethereum (SIWE) session.
             </CardDescription>
           </CardHeader>
@@ -41,8 +41,8 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
             Wallet connection alone is not sufficient. Please sign in to verify wallet ownership.
           </CardContent>
           <CardFooter className="flex justify-center">
-            <Link href="/login">
-              <Button className="gap-2">
+            <Link href="/login" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto gap-2">
                 Sign In with Wallet
               </Button>
             </Link>
@@ -56,14 +56,14 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
     const hasRole = allowedRoles.includes(user.primary_role) || user.primary_role === "ADMIN";
     if (!hasRole) {
       return (
-        <div className="max-w-md mx-auto my-16 px-4">
+        <div className="max-w-md mx-auto my-8 sm:my-16 px-4">
           <Card className="border-destructive/30 bg-card shadow-lg text-center">
             <CardHeader className="space-y-2">
               <div className="w-12 h-12 rounded-full bg-destructive/10 border border-destructive/20 flex items-center justify-center mx-auto text-destructive">
                 <ShieldAlert className="w-6 h-6" />
               </div>
-              <CardTitle className="text-xl">Access Denied</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-lg sm:text-xl font-bold">Access Denied</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">
                 Your account ({user.primary_role}) does not have permission to view this resource.
               </CardDescription>
             </CardHeader>
@@ -71,8 +71,8 @@ export function AuthGuard({ children, allowedRoles }: AuthGuardProps) {
               Required roles: {allowedRoles.join(", ")}
             </CardContent>
             <CardFooter className="flex justify-center">
-              <Link href="/dashboard">
-                <Button variant="outline">Back to Dashboard</Button>
+              <Link href="/dashboard" className="w-full sm:w-auto">
+                <Button variant="outline" className="w-full sm:w-auto">Back to Dashboard</Button>
               </Link>
             </CardFooter>
           </Card>

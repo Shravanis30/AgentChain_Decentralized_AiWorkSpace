@@ -95,15 +95,15 @@ export default function NewAgentPage() {
 
   return (
     <AuthGuard allowedRoles={["DEVELOPER", "AGENT_OPERATOR", "ADMIN"]}>
-      <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-        <div className="flex items-center justify-between border-b border-border pb-4">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Register New Agent</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Register New Agent</h1>
             <p className="text-xs text-muted-foreground mt-0.5">
               Create an AgentChain agent manifest conforming to Protocol 1.0.
             </p>
           </div>
-          <Link href="/agents">
+          <Link href="/agents" className="self-start sm:self-auto">
             <Button variant="outline" size="sm">
               Back to Catalog
             </Button>
@@ -111,7 +111,7 @@ export default function NewAgentPage() {
         </div>
 
         {error && (
-          <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm">
+          <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-xs sm:text-sm break-words">
             {error}
           </div>
         )}
@@ -119,7 +119,7 @@ export default function NewAgentPage() {
         <form onSubmit={handleSubmit} className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-base">Metadata</CardTitle>
+              <CardTitle className="text-sm sm:text-base">Metadata</CardTitle>
               <CardDescription className="text-xs">
                 Unique identifier and descriptive details for public discovery.
               </CardDescription>
@@ -171,9 +171,9 @@ export default function NewAgentPage() {
           </Card>
 
           <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
+            <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <CardTitle className="text-base">Agent Manifest (JSON)</CardTitle>
+                <CardTitle className="text-sm sm:text-base">Agent Manifest (JSON)</CardTitle>
                 <CardDescription className="text-xs">
                   Defines protocol version, capabilities, schemas, timeouts, and pricing.
                 </CardDescription>
@@ -183,28 +183,29 @@ export default function NewAgentPage() {
                 variant="outline"
                 size="sm"
                 onClick={() => setManifestText(JSON.stringify(DEFAULT_MANIFEST, null, 2))}
+                className="self-start sm:self-auto text-xs"
               >
                 Reset Template
               </Button>
             </CardHeader>
             <CardContent>
               <textarea
-                rows={18}
+                rows={16}
                 value={manifestText}
                 onChange={(e) => setManifestText(e.target.value)}
-                className="w-full bg-secondary/40 font-mono text-xs p-3 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full max-w-full bg-secondary/40 font-mono text-xs p-3 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary"
                 spellCheck={false}
               />
             </CardContent>
           </Card>
 
-          <div className="flex justify-end gap-3">
-            <Link href="/agents">
-              <Button type="button" variant="outline">
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-2">
+            <Link href="/agents" className="w-full sm:w-auto">
+              <Button type="button" variant="outline" className="w-full sm:w-auto">
                 Cancel
               </Button>
             </Link>
-            <Button type="submit" disabled={loading}>
+            <Button type="submit" disabled={loading} className="w-full sm:w-auto">
               {loading ? "Registering..." : "Create Agent in DRAFT"}
             </Button>
           </div>

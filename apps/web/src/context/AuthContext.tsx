@@ -4,14 +4,19 @@ import React, { createContext, useContext, useEffect, useState, useCallback } fr
 import { useAccount, useDisconnect, useSignMessage } from "wagmi";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchAuthMe, fetchNonce, logoutUser, verifySignature, User, Wallet } from "@/lib/api";
+import { getDevWalletAccount } from "@/lib/mockWallet";
+
+const ALLOWED_CHAINS = [31337, 84532, 8453];
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   isSigning: boolean;
+  isDevWalletSigning: boolean;
   error: string | null;
   signInWithEthereum: () => Promise<void>;
+  signInWithDevWallet: () => Promise<void>;
   signOut: () => Promise<void>;
   clearError: () => void;
 }
@@ -25,6 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const queryClient = useQueryClient();
 
   const [isSigning, setIsSigning] = useState<boolean>(false);
+  const [isDevWalletSigning, setIsDevWalletSigning] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
   // Fetch authenticated user via TanStack Query
@@ -47,7 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (user.primary_wallet.address.toLowerCase() !== address.toLowerCase()) {
         // Connected wallet has switched accounts
         setAuthError(
-          `Connected wallet (${address.slice(0, 6)}...${address.slice(-4)}) differs from authenticated user (${user.primary_wallet.address.slice(0, 6)}...${user.primary_wallet.address.slice(-4)}). Please sign in with the active wallet.`
+          `Connected wallet (${address.slice(0, 6)}...${address.slice(-4)}) differs from authenticated user (${user.primary_wallet.address.slice(0, 6)}...${user.primary_wallet.address.slice(-4)}). Please sign in with the active wallet or sign out.`
         );
       } else {
         setAuthError(null);
@@ -61,11 +67,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    const activeChainId = chainId || 31337;
+    if (!ALLOWED_CHAINS.includes(activeChainId)) {
+      setAuthError(
+        `Current network (Chain ID: ${activeChainId}) is not supported. Please switch your wallet to Local Anvil (31337) or Base Sepolia (84532).`
+      );
+      return;
+    }
+
     setIsSigning(true);
     setAuthError(null);
 
     try {
-      const activeChainId = chainId || 31337;
       // 1. Backend generates cryptographically secure nonce
       const { nonce } = await fetchNonce(address, activeChainId);
 
@@ -101,6 +114,44 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [address, isConnected, chainId, signMessageAsync, refetchUser]);
 
+  const signInWithDevWallet = useCallback(async () => {
+    setIsDevWalletSigning(true);
+    setAuthError(null);
+
+    try {
+      // Disconnect any active wagmi injected account to avoid address mismatch
+      disconnect();
+
+      const devAccount = getDevWalletAccount();
+      const activeChainId = 31337;
+
+      // 1. Backend generates cryptographically secure nonce
+      const { nonce } = await fetchNonce(devAccount.address, activeChainId);
+
+      // 2. Construct EIP-4361 SIWE message
+      const domain = window.location.host;
+      const origin = window.location.origin;
+      const issuedAt = new Date().toISOString();
+      const expirationTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+
+      const message = `${domain} wants you to sign in with your Ethereum account:\n${devAccount.address}\n\nSign in with Ethereum to AgentChain\n\nURI: ${origin}\nVersion: 1\nChain ID: ${activeChainId}\nNonce: ${nonce}\nIssued At: ${issuedAt}\nExpiration Time: ${expirationTime}`;
+
+      // 3. Sign cryptographically using deterministic dev private key
+      const signature = await devAccount.signMessage({ message });
+
+      // 4. Verify signature on backend & create session
+      await verifySignature(message, signature);
+
+      // 5. Update user state
+      await refetchUser();
+    } catch (err: unknown) {
+      console.error("Dev Wallet Authentication failed:", err);
+      setAuthError(err instanceof Error ? err.message : "Dev Wallet authentication failed");
+    } finally {
+      setIsDevWalletSigning(false);
+    }
+  }, [disconnect, refetchUser]);
+
   const signOut = useCallback(async () => {
     try {
       await logoutUser();
@@ -122,8 +173,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated,
         isLoading: isUserLoading,
         isSigning,
+        isDevWalletSigning,
         error: authError,
         signInWithEthereum,
+        signInWithDevWallet,
         signOut,
         clearError,
       }}

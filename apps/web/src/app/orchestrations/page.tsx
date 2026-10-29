@@ -57,24 +57,24 @@ export default function OrchestrationsListPage() {
   const failedCount = orchestrations.filter((o) => o.status === "FAILED").length;
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/40 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border/40 pb-6">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
               Multi-Agent Orchestrations
             </h1>
-            <Badge variant="outline" className="text-xs font-mono uppercase bg-indigo-500/10 text-indigo-400 border-indigo-500/20">
+            <Badge variant="outline" className="text-[10px] sm:text-xs font-mono uppercase bg-indigo-500/10 text-indigo-400 border-indigo-500/20">
               LangGraph DAG
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             Submit complex goals decomposed into dependency-aware DAGs executed across isolated sandboxed agents.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <Button variant="outline" size="sm" onClick={loadData} disabled={loading}>
             {loading ? "Refreshing..." : "Refresh"}
           </Button>
@@ -87,36 +87,36 @@ export default function OrchestrationsListPage() {
       </div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card className="bg-card/50 backdrop-blur border-border/60">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs uppercase tracking-wider">Total Orchestrations</CardDescription>
-            <CardTitle className="text-2xl font-mono">{totalCount}</CardTitle>
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
+            <CardDescription className="text-[10px] sm:text-xs uppercase tracking-wider">Total Orchestrations</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl font-mono">{totalCount}</CardTitle>
           </CardHeader>
         </Card>
         <Card className="bg-card/50 backdrop-blur border-border/60">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs uppercase tracking-wider text-cyan-400">Active / Running</CardDescription>
-            <CardTitle className="text-2xl font-mono text-cyan-400">{runningCount}</CardTitle>
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
+            <CardDescription className="text-[10px] sm:text-xs uppercase tracking-wider text-cyan-400">Active / Running</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl font-mono text-cyan-400">{runningCount}</CardTitle>
           </CardHeader>
         </Card>
         <Card className="bg-card/50 backdrop-blur border-border/60">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs uppercase tracking-wider text-emerald-400">Succeeded</CardDescription>
-            <CardTitle className="text-2xl font-mono text-emerald-400">{succeededCount}</CardTitle>
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
+            <CardDescription className="text-[10px] sm:text-xs uppercase tracking-wider text-emerald-400">Succeeded</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl font-mono text-emerald-400">{succeededCount}</CardTitle>
           </CardHeader>
         </Card>
         <Card className="bg-card/50 backdrop-blur border-border/60">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs uppercase tracking-wider text-rose-400">Failed</CardDescription>
-            <CardTitle className="text-2xl font-mono text-rose-400">{failedCount}</CardTitle>
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
+            <CardDescription className="text-[10px] sm:text-xs uppercase tracking-wider text-rose-400">Failed</CardDescription>
+            <CardTitle className="text-xl sm:text-2xl font-mono text-rose-400">{failedCount}</CardTitle>
           </CardHeader>
         </Card>
       </div>
 
       {/* Main Content List */}
       {error && (
-        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-sm">
+        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-xs sm:text-sm break-words">
           {error}
         </div>
       )}
@@ -127,13 +127,13 @@ export default function OrchestrationsListPage() {
         </div>
       ) : orchestrations.length === 0 ? (
         <Card className="border-dashed border-border/60 bg-card/20">
-          <CardContent className="flex flex-col items-center justify-center py-16 text-center space-y-4">
+          <CardContent className="flex flex-col items-center justify-center py-16 text-center space-y-4 px-4">
             <div className="w-12 h-12 rounded-full bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 font-mono text-lg">
               DAG
             </div>
             <div className="space-y-1">
-              <h3 className="font-semibold text-lg">No orchestrations submitted yet</h3>
-              <p className="text-sm text-muted-foreground max-w-md">
+              <h3 className="font-semibold text-base sm:text-lg">No orchestrations submitted yet</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground max-w-md">
                 Launch a multi-agent orchestration to coordinate multiple specialized agents working on research, analysis, and synthesis.
               </p>
             </div>
@@ -151,9 +151,9 @@ export default function OrchestrationsListPage() {
             const taskTotal = orch.tasks?.length || 0;
             return (
               <Card key={orch.id} className="bg-card/40 backdrop-blur border-border/50 hover:border-indigo-500/40 transition-colors">
-                <CardContent className="p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <CardContent className="p-4 sm:p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="space-y-2 flex-1 min-w-0">
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                       {getStatusBadge(orch.status)}
                       <span className="font-mono text-xs text-muted-foreground">
                         {orch.id.slice(0, 8)}...{orch.id.slice(-4)}
@@ -163,11 +163,11 @@ export default function OrchestrationsListPage() {
                       </span>
                     </div>
 
-                    <h3 className="font-semibold text-base text-foreground truncate" title={orch.goal}>
+                    <h3 className="font-semibold text-sm sm:text-base text-foreground truncate" title={orch.goal}>
                       {orch.goal}
                     </h3>
 
-                    <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-muted-foreground">
+                    <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-1 text-xs text-muted-foreground">
                       <div>
                         Tasks: <span className="text-foreground font-medium">{taskSuccess}/{taskTotal} completed</span>
                       </div>
@@ -178,14 +178,14 @@ export default function OrchestrationsListPage() {
                         Artifacts: <span className="text-foreground font-medium">{orch.artifacts?.length || 0}</span>
                       </div>
                       <div>
-                        Created: <span className="text-foreground">{new Date(orch.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}</span>
+                        Created: <span className="text-foreground">{new Date(orch.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
-                    <Link href={`/orchestrations/${orch.id}`}>
-                      <Button variant="outline" size="sm" className="font-mono text-xs hover:bg-indigo-500/10 hover:text-indigo-400 hover:border-indigo-500/30">
+                  <div className="flex items-center gap-3 shrink-0 pt-1 md:pt-0">
+                    <Link href={`/orchestrations/${orch.id}`} className="w-full md:w-auto">
+                      <Button variant="outline" size="sm" className="w-full md:w-auto font-mono text-xs hover:bg-indigo-500/10 hover:text-indigo-400 hover:border-indigo-500/30">
                         View DAG & Stream →
                       </Button>
                     </Link>

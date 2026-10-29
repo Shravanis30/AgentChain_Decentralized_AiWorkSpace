@@ -432,10 +432,28 @@ export async function createOrchestration(
   tasks?: TaskDefinitionPayload[],
   metadata?: Record<string, unknown>
 ): Promise<Orchestration> {
+  const sanitizedTasks = tasks?.map((t) => {
+    const isValidUuid = t.agent_id ? /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(t.agent_id) : false;
+    const task: TaskDefinitionPayload = {
+      task_key: t.task_key,
+      input: t.input || {},
+      depends_on: t.depends_on || [],
+      max_attempts: t.max_attempts || 3,
+    };
+    if (t.capability) {
+      task.capability = t.capability;
+    }
+    if (isValidUuid) {
+      task.agent_id = t.agent_id;
+      task.agent_version = t.agent_version;
+    }
+    return task;
+  });
+
   const res = await fetch(`${API_BASE}/orchestrations`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ goal, tasks: tasks || null, metadata: metadata || {} }),
+    body: JSON.stringify({ goal, tasks: sanitizedTasks || null, metadata: metadata || {} }),
     credentials: "include",
   });
   if (!res.ok) {

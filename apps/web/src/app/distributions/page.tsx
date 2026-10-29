@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import {
   fetchDistributions,
   Distribution,
@@ -24,19 +23,19 @@ function getStatusBadge(status: string) {
     case "CONFIRMED":
       return (
         <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25">
-          CONFIRMED (Canonical On-Chain)
+          CONFIRMED
         </span>
       );
     case "SUBMITTED":
       return (
         <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25">
-          SUBMITTED (Mined, Awaiting 32 Confs)
+          SUBMITTED
         </span>
       );
     case "AUTHORIZED":
       return (
         <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-400 border border-indigo-500/25">
-          AUTHORIZED (Ready for Settlement)
+          AUTHORIZED
         </span>
       );
     case "PENDING":
@@ -48,7 +47,7 @@ function getStatusBadge(status: string) {
     case "REORGED":
       return (
         <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-orange-500/15 text-orange-700 dark:text-orange-400 border border-orange-500/25">
-          REORGED (Chain Reorg Invalidation)
+          REORGED
         </span>
       );
     case "FAILED":
@@ -84,8 +83,8 @@ export default function DistributionsPage() {
           status: statusFilter || undefined,
         });
         setDistributions(res.items || []);
-      } catch (err: any) {
-        setError(err.message || "Failed to load distributions");
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Failed to load distributions");
       } finally {
         setLoading(false);
       }
@@ -94,20 +93,20 @@ export default function DistributionsPage() {
   }, [statusFilter, chainFilter]);
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-6 mb-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">85/10/5 Revenue Distributions</h1>
-          <p className="text-muted-foreground mt-1">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">85/10/5 Revenue Distributions</h1>
+          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
             Deterministic on-chain split: 85% Developer, 10% Stakers, 5% (+ remainder) DAO Treasury.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 w-full md:w-auto">
           <select
             aria-label="Filter by status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-3 py-2 bg-card border border-border rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <option value="">All Statuses</option>
             <option value="PENDING">Pending</option>
@@ -122,7 +121,7 @@ export default function DistributionsPage() {
             aria-label="Filter by network"
             value={chainFilter}
             onChange={(e) => setChainFilter(e.target.value)}
-            className="px-3 py-2 bg-card border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-3 py-2 bg-card border border-border rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <option value="">All Networks</option>
             <option value="31337">Anvil (31337)</option>
@@ -133,60 +132,60 @@ export default function DistributionsPage() {
       </div>
 
       {/* Observational Notice */}
-      <div className="p-4 mb-6 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-300 text-sm flex items-center justify-between">
+      <div className="p-3.5 sm:p-4 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs sm:text-sm flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4">
         <div>
           <span className="font-semibold">Observational View Only:</span> Economic distribution percentages (85/10/5), recipients, and payment token are enforced strictly by smart contract rules and cannot be manually modified.
         </div>
-        <div className="text-xs px-2.5 py-1 bg-blue-500/20 rounded font-mono">
-          Model: Option B (RevenueDistributor.sol)
+        <div className="text-[11px] px-2.5 py-1 bg-blue-500/20 rounded font-mono self-start sm:self-auto shrink-0">
+          Option B (RevenueDistributor.sol)
         </div>
       </div>
 
       {error && (
-        <div className="p-4 mb-6 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+        <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs sm:text-sm break-words">
           {error}
         </div>
       )}
 
       {loading ? (
-        <div className="py-16 text-center text-muted-foreground">Loading distribution records...</div>
+        <div className="py-16 text-center text-muted-foreground text-sm">Loading distribution records...</div>
       ) : distributions.length === 0 ? (
-        <div className="py-16 text-center border border-dashed border-border rounded-xl">
+        <div className="py-16 text-center border border-dashed border-border rounded-xl p-4">
           <p className="text-muted-foreground text-sm">No revenue distributions found matching criteria.</p>
         </div>
       ) : (
-        <div className="grid gap-6">
+        <div className="space-y-4 sm:space-y-6">
           {distributions.map((d) => (
             <div
               key={d.id}
-              className="p-6 bg-card border border-border rounded-xl shadow-sm space-y-4 hover:border-primary/50 transition-colors"
+              className="p-4 sm:p-6 bg-card border border-border rounded-xl shadow-sm space-y-4 hover:border-primary/50 transition-colors"
             >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 border-b border-border/50 pb-3">
-                <div className="flex items-center gap-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/50 pb-3">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                   <span className="font-mono text-sm font-bold text-foreground">
                     Dist #{d.id.slice(0, 8)}
                   </span>
                   {getStatusBadge(d.status)}
-                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-muted text-muted-foreground">
-                    Chain: {d.chain_id}
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-muted text-muted-foreground">
+                    Chain {d.chain_id}
                   </span>
-                  <span className="text-xs font-mono px-2 py-0.5 rounded bg-muted text-muted-foreground">
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-muted text-muted-foreground">
                     v{d.distribution_version}
                   </span>
                 </div>
-                <div className="text-right">
-                  <span className="text-lg font-bold text-emerald-400">
+                <div className="text-left sm:text-right">
+                  <span className="text-base sm:text-lg font-bold text-emerald-400">
                     Gross: {formatAmount(d.gross_amount)}
                   </span>
                 </div>
               </div>
 
               {/* 85/10/5 Breakdown Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 pt-1">
                 <div className="p-3 bg-muted/30 border border-border/50 rounded-lg">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-medium text-emerald-400">Developer (85%)</span>
-                    <span className="font-bold text-sm">{formatAmount(d.developer_amount)}</span>
+                    <span className="font-bold text-xs sm:text-sm">{formatAmount(d.developer_amount)}</span>
                   </div>
                   <div className="text-xs font-mono text-muted-foreground truncate" title={d.developer_recipient}>
                     {d.developer_recipient}
@@ -196,7 +195,7 @@ export default function DistributionsPage() {
                 <div className="p-3 bg-muted/30 border border-border/50 rounded-lg">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-xs font-medium text-cyan-400">Staking Pool (10%)</span>
-                    <span className="font-bold text-sm">{formatAmount(d.staker_amount)}</span>
+                    <span className="font-bold text-xs sm:text-sm">{formatAmount(d.staker_amount)}</span>
                   </div>
                   <div className="text-xs font-mono text-muted-foreground truncate" title={d.staker_recipient}>
                     {d.staker_recipient}
@@ -205,8 +204,8 @@ export default function DistributionsPage() {
 
                 <div className="p-3 bg-muted/30 border border-border/50 rounded-lg">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-purple-400">DAO Treasury (5% + Remainder)</span>
-                    <span className="font-bold text-sm">{formatAmount(d.dao_amount)}</span>
+                    <span className="text-xs font-medium text-purple-400">DAO Treasury (5%)</span>
+                    <span className="font-bold text-xs sm:text-sm">{formatAmount(d.dao_amount)}</span>
                   </div>
                   <div className="text-xs font-mono text-muted-foreground truncate" title={d.dao_recipient}>
                     {d.dao_recipient}
@@ -215,10 +214,10 @@ export default function DistributionsPage() {
               </div>
 
               {/* Blockchain Confirmation Metadata */}
-              <div className="flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground border-t border-border/40 pt-3">
-                <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-muted-foreground border-t border-border/40 pt-3">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
                   <span>
-                    Escrow ID: <span className="font-mono text-foreground">{d.escrow_id.slice(0, 10)}...</span>
+                    Escrow: <span className="font-mono text-foreground">{d.escrow_id.slice(0, 8)}...</span>
                   </span>
                   <span>
                     Settlement: <span className="font-mono text-foreground">{d.settlement_id.slice(0, 8)}...</span>
@@ -227,12 +226,12 @@ export default function DistributionsPage() {
                     <span>
                       Tx:{" "}
                       <span className="font-mono text-foreground">
-                        {d.distribution_tx_hash.slice(0, 12)}...
+                        {d.distribution_tx_hash.slice(0, 10)}...
                       </span>
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-4">
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
                   <span>
                     Block: <span className="font-mono text-foreground">{d.block_number ?? "Pending"}</span>
                   </span>
@@ -248,6 +247,6 @@ export default function DistributionsPage() {
           ))}
         </div>
       )}
-    </main>
+    </div>
   );
 }

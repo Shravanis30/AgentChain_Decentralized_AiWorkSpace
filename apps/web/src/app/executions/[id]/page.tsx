@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, use, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,13 +13,9 @@ import {
   type ExecutionDetailResponse,
 } from "@/lib/api";
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default function ExecutionDetailPage({ params }: PageProps) {
-  const resolvedParams = use(params);
-  const executionId = resolvedParams.id;
+export default function ExecutionDetailPage() {
+  const params = useParams();
+  const executionId = (params?.id as string) || "";
 
   const [execution, setExecution] = useState<ExecutionDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,7 +24,7 @@ export default function ExecutionDetailPage({ params }: PageProps) {
   const [liveConnected, setLiveConnected] = useState(false);
   const eventSourceRef = useRef<EventSource | null>(null);
 
-  const loadExecution = async () => {
+  const loadExecution = useCallback(async () => {
     try {
       const data = await fetchExecution(executionId);
       setExecution(data);
@@ -37,7 +34,7 @@ export default function ExecutionDetailPage({ params }: PageProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [executionId]);
 
   const handleCancel = async () => {
     if (!execution) return;
@@ -105,7 +102,7 @@ export default function ExecutionDetailPage({ params }: PageProps) {
       es.close();
       setLiveConnected(false);
     };
-  }, [executionId]);
+  }, [executionId, loadExecution]);
 
   const getStatusBadge = (st: string) => {
     switch (st) {
@@ -138,7 +135,7 @@ export default function ExecutionDetailPage({ params }: PageProps) {
 
   if (loading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-20 text-center text-muted-foreground">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-20 text-center text-muted-foreground text-sm">
         Loading execution record...
       </div>
     );
@@ -146,8 +143,8 @@ export default function ExecutionDetailPage({ params }: PageProps) {
 
   if (error || !execution) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-20 text-center space-y-4">
-        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm max-w-lg mx-auto">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-20 text-center space-y-4">
+        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm max-w-lg mx-auto break-words">
           {error || "Execution not found or access denied."}
         </div>
         <Link href="/agents">
@@ -160,12 +157,12 @@ export default function ExecutionDetailPage({ params }: PageProps) {
   const isCancellable = execution.status === "QUEUED" || execution.status === "RUNNING";
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-6">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight">Execution Audit</h1>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Execution Audit</h1>
             {getStatusBadge(execution.status)}
             {liveConnected && (
               <span className="text-[11px] font-mono text-emerald-400 bg-emerald-950/40 border border-emerald-800/40 px-2 py-0.5 rounded-full flex items-center gap-1">
@@ -174,11 +171,11 @@ export default function ExecutionDetailPage({ params }: PageProps) {
               </span>
             )}
           </div>
-          <p className="text-xs font-mono text-muted-foreground mt-1">
+          <p className="text-xs font-mono text-muted-foreground mt-1 break-all">
             ID: {execution.id}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {isCancellable && (
             <Button
               size="sm"
@@ -201,15 +198,15 @@ export default function ExecutionDetailPage({ params }: PageProps) {
       </div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card>
-          <CardHeader className="p-4 pb-2">
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
             <CardDescription className="text-xs">Agent</CardDescription>
             <CardTitle className="text-sm font-semibold truncate">
               {execution.agent?.name || execution.agent_id.slice(0, 8)}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-0">
+          <CardContent className="p-3.5 sm:p-4 pt-0">
             <span className="text-xs font-mono text-muted-foreground">
               v{execution.agent?.current_version?.version || "1.0.0"}
             </span>
@@ -217,7 +214,7 @@ export default function ExecutionDetailPage({ params }: PageProps) {
         </Card>
 
         <Card>
-          <CardHeader className="p-4 pb-2">
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
             <CardDescription className="text-xs">Queued At</CardDescription>
             <CardTitle className="text-sm font-semibold">
               {execution.queued_at || execution.created_at
@@ -225,7 +222,7 @@ export default function ExecutionDetailPage({ params }: PageProps) {
                 : "-"}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-0">
+          <CardContent className="p-3.5 sm:p-4 pt-0">
             <span className="text-xs text-muted-foreground">
               {execution.queued_at || execution.created_at
                 ? new Date(execution.queued_at || execution.created_at).toLocaleDateString()
@@ -235,7 +232,7 @@ export default function ExecutionDetailPage({ params }: PageProps) {
         </Card>
 
         <Card>
-          <CardHeader className="p-4 pb-2">
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
             <CardDescription className="text-xs">Completed At</CardDescription>
             <CardTitle className="text-sm font-semibold">
               {execution.completed_at ? new Date(execution.completed_at).toLocaleTimeString() : (
@@ -243,7 +240,7 @@ export default function ExecutionDetailPage({ params }: PageProps) {
               )}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-0">
+          <CardContent className="p-3.5 sm:p-4 pt-0">
             <span className="text-xs text-muted-foreground">
               {execution.completed_at ? new Date(execution.completed_at).toLocaleDateString() : "-"}
             </span>
@@ -251,13 +248,13 @@ export default function ExecutionDetailPage({ params }: PageProps) {
         </Card>
 
         <Card>
-          <CardHeader className="p-4 pb-2">
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
             <CardDescription className="text-xs">Execution Duration</CardDescription>
             <CardTitle className="text-sm font-semibold">
               {String(execution.metadata_json?.execution_time_ms ?? "-")} ms
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-0">
+          <CardContent className="p-3.5 sm:p-4 pt-0">
             <span className="text-xs text-muted-foreground">
               Attempt {execution.attempt_count ?? 1}
             </span>
@@ -274,17 +271,17 @@ export default function ExecutionDetailPage({ params }: PageProps) {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 pt-0">
-            <p className="text-xs text-destructive font-mono">{execution.error_message}</p>
+            <p className="text-xs text-destructive font-mono break-words">{execution.error_message}</p>
           </CardContent>
         </Card>
       )}
 
       {/* Inputs & Outputs with Cryptographic Hashes */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
         {/* Input */}
         <Card className="space-y-2">
           <CardHeader>
-            <CardTitle className="text-base">Input Payload</CardTitle>
+            <CardTitle className="text-sm sm:text-base">Input Payload</CardTitle>
             <CardDescription className="text-xs">
               Canonical JSON RFC 8785 representation
             </CardDescription>
@@ -298,7 +295,7 @@ export default function ExecutionDetailPage({ params }: PageProps) {
                 {execution.input_hash}
               </span>
             </div>
-            <pre className="p-3 bg-secondary/30 rounded-lg text-xs font-mono overflow-x-auto border border-border max-h-80">
+            <pre className="p-3 bg-secondary/30 rounded-lg text-xs font-mono overflow-x-auto border border-border max-h-80 max-w-full">
               {JSON.stringify(execution.input_data, null, 2)}
             </pre>
           </CardContent>
@@ -307,7 +304,7 @@ export default function ExecutionDetailPage({ params }: PageProps) {
         {/* Output */}
         <Card className="space-y-2">
           <CardHeader>
-            <CardTitle className="text-base">Output Deliverable</CardTitle>
+            <CardTitle className="text-sm sm:text-base">Output Deliverable</CardTitle>
             <CardDescription className="text-xs">
               Structured agent execution deliverable
             </CardDescription>
@@ -321,7 +318,7 @@ export default function ExecutionDetailPage({ params }: PageProps) {
                 {execution.output_hash || "Awaiting execution output..."}
               </span>
             </div>
-            <pre className="p-3 bg-secondary/30 rounded-lg text-xs font-mono overflow-x-auto border border-border max-h-80">
+            <pre className="p-3 bg-secondary/30 rounded-lg text-xs font-mono overflow-x-auto border border-border max-h-80 max-w-full">
               {execution.output_data ? JSON.stringify(execution.output_data, null, 2) : "// Awaiting output..."}
             </pre>
           </CardContent>

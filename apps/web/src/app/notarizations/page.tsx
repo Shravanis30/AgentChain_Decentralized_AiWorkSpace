@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import {
   fetchNotarizationByExecutionId,
   verifyNotarization,
@@ -30,8 +29,8 @@ export default function NotarizationsPage() {
     try {
       const data = await fetchNotarizationByExecutionId(searchExecId.trim(), chainId);
       setNotarization(data);
-    } catch (err: any) {
-      setError(err.message || "Failed to load notarization proof");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to load notarization proof");
     } finally {
       setLoading(false);
     }
@@ -45,8 +44,8 @@ export default function NotarizationsPage() {
         chain_id: notarization.chain_id,
       });
       setVerificationResult(result);
-    } catch (err: any) {
-      setError(err.message || "Verification request failed");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Verification request failed");
     } finally {
       setVerifying(false);
     }
@@ -55,39 +54,39 @@ export default function NotarizationsPage() {
   const getStatusBadge = (status: string, isCanonical: boolean) => {
     if (!isCanonical || status === "REORGED") {
       return (
-        <span className="px-3 py-1 text-xs font-semibold rounded-full bg-red-500/15 text-red-700 dark:text-red-400 border border-red-500/25">
-          REORGED (Orphaned by Chain Reorganization)
+        <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-red-500/15 text-red-700 dark:text-red-400 border border-red-500/25">
+          REORGED (Orphaned)
         </span>
       );
     }
     switch (status) {
       case "CONFIRMED":
         return (
-          <span className="px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25">
-            CONFIRMED (Canonical On-Chain)
+          <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/25">
+            CONFIRMED
           </span>
         );
       case "CONFIRMING":
         return (
-          <span className="px-3 py-1 text-xs font-semibold rounded-full bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25">
-            CONFIRMING (Mined, Accumulating Confirmations)
+          <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-500/15 text-blue-700 dark:text-blue-400 border border-blue-500/25">
+            CONFIRMING
           </span>
         );
       case "SUBMITTED":
         return (
-          <span className="px-3 py-1 text-xs font-semibold rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-400 border border-indigo-500/25">
-            SUBMITTED (Mined on Relayer)
+          <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-indigo-500/15 text-indigo-700 dark:text-indigo-400 border border-indigo-500/25">
+            SUBMITTED
           </span>
         );
       case "PENDING":
         return (
-          <span className="px-3 py-1 text-xs font-semibold rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/25">
-            PENDING (Queued to Transaction Outbox)
+          <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/25">
+            PENDING
           </span>
         );
       default:
         return (
-          <span className="px-3 py-1 text-xs font-semibold rounded-full bg-muted text-muted-foreground border border-border">
+          <span className="px-2.5 py-1 text-xs font-semibold rounded-full bg-muted text-muted-foreground border border-border">
             {status}
           </span>
         );
@@ -98,9 +97,9 @@ export default function NotarizationsPage() {
     switch (vStatus) {
       case "VERIFIED":
         return (
-          <div className="p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
-            <div className="flex items-center space-x-2 font-semibold">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+          <div className="p-3.5 sm:p-4 rounded-xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-300">
+            <div className="flex items-center space-x-2 font-semibold text-xs sm:text-sm">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
               <span>CRYPTOGRAPHICALLY VERIFIED</span>
             </div>
             <p className="mt-1 text-xs text-emerald-400/80">
@@ -110,9 +109,9 @@ export default function NotarizationsPage() {
         );
       case "HASH_MISMATCH":
         return (
-          <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/30 text-red-300">
-            <div className="flex items-center space-x-2 font-semibold">
-              <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
+          <div className="p-3.5 sm:p-4 rounded-xl bg-red-950/40 border border-red-500/30 text-red-300">
+            <div className="flex items-center space-x-2 font-semibold text-xs sm:text-sm">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-500 shrink-0" />
               <span>HASH MISMATCH VIOLATION</span>
             </div>
             <p className="mt-1 text-xs text-red-400/80">
@@ -122,9 +121,9 @@ export default function NotarizationsPage() {
         );
       case "REORGED":
         return (
-          <div className="p-4 rounded-xl bg-orange-950/40 border border-orange-500/30 text-orange-300">
-            <div className="flex items-center space-x-2 font-semibold">
-              <span className="w-2.5 h-2.5 rounded-full bg-orange-500" />
+          <div className="p-3.5 sm:p-4 rounded-xl bg-orange-950/40 border border-orange-500/30 text-orange-300">
+            <div className="flex items-center space-x-2 font-semibold text-xs sm:text-sm">
+              <span className="w-2.5 h-2.5 rounded-full bg-orange-500 shrink-0" />
               <span>REORGANIZATION INVALIDATED</span>
             </div>
             <p className="mt-1 text-xs text-orange-400/80">
@@ -134,9 +133,9 @@ export default function NotarizationsPage() {
         );
       default:
         return (
-          <div className="p-4 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-300">
-            <div className="flex items-center space-x-2 font-semibold">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+          <div className="p-3.5 sm:p-4 rounded-xl bg-amber-950/40 border border-amber-500/30 text-amber-300">
+            <div className="flex items-center space-x-2 font-semibold text-xs sm:text-sm">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shrink-0" />
               <span>{vStatus}</span>
             </div>
           </div>
@@ -158,48 +157,48 @@ export default function NotarizationsPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Header */}
       <div>
-        <div className="flex items-center space-x-3">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground">
             Cryptographic Result Notarization Proofs
           </h1>
-          <span className="px-2.5 py-0.5 rounded text-xs font-semibold bg-primary/10 text-primary border border-primary/20">
-            Phase 6.3 Read-Only Observability
+          <span className="px-2.5 py-0.5 rounded text-[11px] font-semibold bg-primary/10 text-primary border border-primary/20">
+            Read-Only Observability
           </span>
         </div>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
           Verify immutable on-chain result hash anchoring, RFC 8785 canonicalization, and canonical confirmation depth.
         </p>
       </div>
 
       {/* Search Bar */}
-      <form onSubmit={handleLookup} className="flex flex-col sm:flex-row gap-3">
+      <form onSubmit={handleLookup} className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
         <div className="flex-1">
           <input
             type="text"
-            placeholder="Enter Agent Execution UUID (e.g., 550e8400-e29b-41d4-a716-446655440000)"
+            placeholder="Enter Agent Execution UUID..."
             value={searchExecId}
             onChange={(e) => setSearchExecId(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 font-mono text-sm"
+            className="w-full px-3.5 sm:px-4 py-2.5 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 font-mono text-xs sm:text-sm"
           />
         </div>
         <div className="w-full sm:w-48">
           <select
             value={chainId}
             onChange={(e) => setChainId(Number(e.target.value))}
-            className="w-full px-3 py-2.5 rounded-lg border border-border bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 text-sm"
+            className="w-full px-3 py-2.5 rounded-lg border border-border bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 text-xs sm:text-sm"
           >
             <option value={31337}>Local Anvil (31337)</option>
             <option value={84532}>Base Sepolia (84532)</option>
-            <option value={8453} disabled>Base Mainnet (8453 - Blocked)</option>
+            <option value={8453} disabled>Base Mainnet (Blocked)</option>
           </select>
         </div>
         <button
           type="submit"
           disabled={loading || !searchExecId.trim()}
-          className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm transition-colors disabled:opacity-50"
+          className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm transition-colors disabled:opacity-50 shrink-0"
         >
           {loading ? "Searching..." : "Lookup Proof"}
         </button>
@@ -207,7 +206,7 @@ export default function NotarizationsPage() {
 
       {/* Error display */}
       {error && (
-        <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+        <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-xs sm:text-sm break-words">
           {error}
         </div>
       )}
@@ -216,12 +215,12 @@ export default function NotarizationsPage() {
       {notarization && (
         <div className="border border-border rounded-2xl bg-card overflow-hidden divide-y divide-border">
           {/* Top Bar */}
-          <div className="p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-muted/20">
-            <div>
-              <span className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">
+          <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-muted/20">
+            <div className="min-w-0">
+              <span className="text-[11px] text-muted-foreground uppercase tracking-wider font-semibold">
                 Execution Identity
               </span>
-              <div className="font-mono text-base font-semibold text-foreground mt-0.5">
+              <div className="font-mono text-sm sm:text-base font-semibold text-foreground mt-0.5 break-all">
                 {notarization.execution_id}
               </div>
             </div>
@@ -229,9 +228,9 @@ export default function NotarizationsPage() {
           </div>
 
           {/* Verification Trigger Banner */}
-          <div className="p-6 bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="p-4 sm:p-6 bg-card flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div>
-              <h3 className="font-medium text-foreground text-sm">Cryptographic On-Chain Verification</h3>
+              <h3 className="font-medium text-foreground text-xs sm:text-sm">Cryptographic On-Chain Verification</h3>
               <p className="text-xs text-muted-foreground mt-0.5">
                 Recomputes canonical digest and verifies status against ResultNotary smart contract.
               </p>
@@ -239,7 +238,7 @@ export default function NotarizationsPage() {
             <button
               onClick={handleVerify}
               disabled={verifying}
-              className="px-4 py-2 rounded-lg bg-secondary hover:bg-secondary/80 text-foreground text-xs font-semibold border border-border transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto px-4 py-2 rounded-lg bg-secondary hover:bg-secondary/80 text-foreground text-xs font-semibold border border-border transition-colors disabled:opacity-50 shrink-0"
             >
               {verifying ? "Verifying..." : "Verify Proof"}
             </button>
@@ -247,13 +246,13 @@ export default function NotarizationsPage() {
 
           {/* Verification Result Display */}
           {verificationResult && (
-            <div className="p-6 bg-muted/10">
+            <div className="p-4 sm:p-6 bg-muted/10">
               {getVerificationBadge(verificationResult.verification_status)}
             </div>
           )}
 
           {/* Details Grid */}
-          <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+          <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 text-xs sm:text-sm">
             {/* Hash & Algorithm */}
             <div className="space-y-4">
               <div>
@@ -308,11 +307,11 @@ export default function NotarizationsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <span className="text-xs text-muted-foreground">Block Number</span>
                   <div className="font-medium text-foreground mt-0.5">
-                    {notarization.block_number ?? "Pending mining"}
+                    {notarization.block_number ?? "Pending"}
                   </div>
                 </div>
                 <div>
@@ -338,11 +337,11 @@ export default function NotarizationsPage() {
 
           {/* Canonical Payload Inspector */}
           {notarization.payload_json && Object.keys(notarization.payload_json).length > 0 && (
-            <div className="p-6 bg-muted/5">
+            <div className="p-4 sm:p-6 bg-muted/5">
               <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider">
                 Canonical Payload Envelope (RFC 8785 Source)
               </span>
-              <pre className="mt-2 p-3 rounded-lg bg-card border border-border text-xs font-mono text-muted-foreground overflow-x-auto">
+              <pre className="mt-2 p-3 rounded-lg bg-card border border-border text-xs font-mono text-muted-foreground overflow-x-auto max-w-full">
                 {JSON.stringify(notarization.payload_json, null, 2)}
               </pre>
             </div>
@@ -352,7 +351,7 @@ export default function NotarizationsPage() {
 
       {/* Empty / Initial State */}
       {!notarization && !loading && !error && (
-        <div className="border border-border/60 border-dashed rounded-2xl p-12 text-center text-muted-foreground">
+        <div className="border border-border/60 border-dashed rounded-2xl p-8 sm:p-12 text-center text-muted-foreground">
           <div className="w-12 h-12 rounded-full bg-muted mx-auto flex items-center justify-center text-xl mb-3">
             🔒
           </div>

@@ -1,7 +1,7 @@
 {
   "network": "Base Sepolia",
   "chain_id": 84532,
-  "observed_block_number": 47715723,
+  "observed_block_number": 48095790,
   "observations": [
     {
       "type": "LIVE \u2014 EXTERNAL CHAIN STATE OBSERVATION",
@@ -11,7 +11,7 @@
     {
       "type": "LIVE \u2014 EXTERNAL CHAIN STATE OBSERVATION",
       "item": "latest_block_number",
-      "value": 47715723
+      "value": 48095790
     }
   ],
   "bytecode_checks": [

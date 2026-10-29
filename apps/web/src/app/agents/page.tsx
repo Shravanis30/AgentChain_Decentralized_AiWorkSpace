@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ export default function AgentsPage() {
 
   const canCreate = user && ["DEVELOPER", "AGENT_OPERATOR", "ADMIN"].includes(user.primary_role);
 
-  const loadAgents = async () => {
+  const loadAgents = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -44,11 +44,11 @@ export default function AgentsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, capability, status, page]);
 
   useEffect(() => {
     loadAgents();
-  }, [page, status]);
+  }, [loadAgents]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,24 +73,24 @@ export default function AgentsPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Header Banner */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-6">
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight">Agent Registry & Discovery</h1>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Agent Registry & Discovery</h1>
+          <p className="text-muted-foreground mt-1 text-xs sm:text-sm">
             Discover verified autonomous agents with machine-readable manifests and deterministic execution.
           </p>
         </div>
         {canCreate && (
-          <Link href="/agents/new">
-            <Button className="shadow-md shadow-primary/20">Register New Agent</Button>
+          <Link href="/agents/new" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto shadow-md shadow-primary/20">Register New Agent</Button>
           </Link>
         )}
       </div>
 
       {/* Filter and Search Bar */}
-      <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-4 gap-4 bg-card p-4 rounded-xl border border-border">
+      <form onSubmit={handleSearchSubmit} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 bg-card p-3.5 sm:p-5 rounded-xl border border-border">
         <div className="sm:col-span-2">
           <label className="text-xs font-medium text-muted-foreground mb-1 block">Search Agents</label>
           <input
@@ -129,26 +129,26 @@ export default function AgentsPage() {
             <option value="DEPRECATED">DEPRECATED</option>
           </select>
         </div>
-        <div className="sm:col-span-4 flex justify-end gap-2">
-          <Button type="button" variant="outline" size="sm" onClick={() => { setSearch(""); setCapability(""); setStatus("PUBLISHED"); setPage(1); }}>
-            Reset
+        <div className="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row justify-end gap-2 pt-1">
+          <Button type="button" variant="outline" size="sm" onClick={() => { setSearch(""); setCapability(""); setStatus("PUBLISHED"); setPage(1); }} className="w-full sm:w-auto">
+            Reset Filters
           </Button>
-          <Button type="submit" size="sm">
-            Search
+          <Button type="submit" size="sm" className="w-full sm:w-auto">
+            Search Agents
           </Button>
         </div>
       </form>
 
       {/* Agents Grid */}
       {loading ? (
-        <div className="py-20 text-center text-muted-foreground">Loading registry catalog...</div>
+        <div className="py-20 text-center text-muted-foreground text-sm">Loading registry catalog...</div>
       ) : error ? (
-        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm text-center">
+        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm text-center break-words">
           {error}
         </div>
       ) : agents.length === 0 ? (
-        <div className="py-16 text-center border border-dashed border-border rounded-xl">
-          <p className="text-muted-foreground">No agents found matching your query.</p>
+        <div className="py-16 text-center border border-dashed border-border rounded-xl p-4">
+          <p className="text-muted-foreground text-sm">No agents found matching your query.</p>
           {canCreate && (
             <Link href="/agents/new" className="mt-3 inline-block">
               <Button size="sm" variant="outline">Create One Now</Button>
@@ -160,20 +160,20 @@ export default function AgentsPage() {
           <div className="text-xs text-muted-foreground">
             Showing {agents.length} of {total} registered agents
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {agents.map((agent) => (
               <Card key={agent.id} className="hover:border-primary/50 transition-all flex flex-col justify-between">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between gap-2">
-                    <CardTitle className="text-lg font-bold truncate">{agent.name}</CardTitle>
-                    <Badge variant={getStatusBadgeVariant(agent.status)}>{agent.status}</Badge>
+                    <CardTitle className="text-base sm:text-lg font-bold truncate">{agent.name}</CardTitle>
+                    <Badge variant={getStatusBadgeVariant(agent.status)} className="shrink-0">{agent.status}</Badge>
                   </div>
-                  <CardDescription className="text-xs font-mono text-muted-foreground">
+                  <CardDescription className="text-xs font-mono text-muted-foreground truncate">
                     slug: {agent.slug} • v{agent.current_version?.version || "1.0.0"}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4 flex-1 flex flex-col justify-between">
-                  <p className="text-sm text-muted-foreground line-clamp-3">
+                  <p className="text-xs sm:text-sm text-muted-foreground line-clamp-3">
                     {agent.description || "No description provided."}
                   </p>
 
@@ -193,12 +193,12 @@ export default function AgentsPage() {
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between pt-2">
-                      <span className="text-xs text-muted-foreground font-mono">
+                    <div className="flex flex-wrap items-center justify-between gap-2 pt-2">
+                      <span className="text-xs text-muted-foreground font-mono truncate max-w-[150px]">
                         Owner: {agent.owner_user_id.slice(0, 8)}...
                       </span>
                       <Link href={`/agents/${agent.id}`}>
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" variant="outline" className="text-xs">
                           View Details
                         </Button>
                       </Link>
@@ -211,7 +211,7 @@ export default function AgentsPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-3 pt-6">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 pt-6">
               <Button
                 variant="outline"
                 size="sm"
@@ -220,7 +220,7 @@ export default function AgentsPage() {
               >
                 Previous
               </Button>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-muted-foreground px-2">
                 Page {page} of {totalPages}
               </span>
               <Button

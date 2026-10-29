@@ -16,8 +16,6 @@ const PRESET_LINEAR = {
     {
       task_key: "research",
       capability: "research",
-      agent_id: "agent-research",
-      agent_version: "1.0.0",
       input: { topic: "AgentChain Worker Sandboxing", depth: "standard" },
       depends_on: [],
       max_attempts: 2,
@@ -25,8 +23,6 @@ const PRESET_LINEAR = {
     {
       task_key: "analysis",
       capability: "analysis",
-      agent_id: "agent-analysis",
-      agent_version: "1.0.0",
       input: { focus_area: "Security Boundaries & Determinism" },
       depends_on: ["research"],
       max_attempts: 2,
@@ -34,8 +30,6 @@ const PRESET_LINEAR = {
     {
       task_key: "synthesis",
       capability: "synthesis",
-      agent_id: "agent-synthesis",
-      agent_version: "1.0.0",
       input: { report_format: "Executive Summary" },
       depends_on: ["analysis"],
       max_attempts: 2,
@@ -51,8 +45,6 @@ const PRESET_PARALLEL = {
     {
       task_key: "tech_research",
       capability: "research",
-      agent_id: "agent-research",
-      agent_version: "1.0.0",
       input: { topic: "gVisor vs Docker isolated worker performance" },
       depends_on: [],
       max_attempts: 2,
@@ -60,8 +52,6 @@ const PRESET_PARALLEL = {
     {
       task_key: "risk_analysis",
       capability: "analysis",
-      agent_id: "agent-analysis",
-      agent_version: "1.0.0",
       input: { topic: "Execution outbox at-least-once edge cases" },
       depends_on: [],
       max_attempts: 2,
@@ -69,8 +59,6 @@ const PRESET_PARALLEL = {
     {
       task_key: "final_synthesis",
       capability: "synthesis",
-      agent_id: "agent-synthesis",
-      agent_version: "1.0.0",
       input: { report_type: "Comprehensive Architecture Assessment" },
       depends_on: ["tech_research", "risk_analysis"],
       max_attempts: 2,
@@ -117,11 +105,8 @@ export default function NewOrchestrationPage() {
     }
 
     try {
-      // 1. Create orchestration
       const orch = await createOrchestration(goal, parsedTasks);
-      // 2. Start orchestration
       await startOrchestration(orch.id);
-      // 3. Navigate to details view
       router.push(`/orchestrations/${orch.id}`);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to create orchestration");
@@ -130,7 +115,7 @@ export default function NewOrchestrationPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="border-b border-border/40 pb-6">
         <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground mb-2">
@@ -140,27 +125,27 @@ export default function NewOrchestrationPage() {
           <span>/</span>
           <span className="text-foreground">New</span>
         </div>
-        <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
           Create Multi-Agent Orchestration
         </h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
           Specify a high-level goal and a DAG of tasks. The orchestrator plans dependency scheduling, dispatches child executions to sandboxed workers, and aggregates results.
         </p>
       </div>
 
       {error && (
-        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-sm">
+        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-xs sm:text-sm break-words">
           {error}
         </div>
       )}
 
       {/* Mode Selector */}
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
         <Button
           type="button"
           variant={mode === "preset" ? "default" : "outline"}
           onClick={() => setMode("preset")}
-          className={mode === "preset" ? "bg-indigo-600 text-white" : ""}
+          className={mode === "preset" ? "bg-indigo-600 text-white w-full sm:w-auto" : "w-full sm:w-auto"}
         >
           Use Workflow Presets
         </Button>
@@ -168,7 +153,7 @@ export default function NewOrchestrationPage() {
           type="button"
           variant={mode === "custom" ? "default" : "outline"}
           onClick={() => setMode("custom")}
-          className={mode === "custom" ? "bg-indigo-600 text-white" : ""}
+          className={mode === "custom" ? "bg-indigo-600 text-white w-full sm:w-auto" : "w-full sm:w-auto"}
         >
           Custom DAG Editor
         </Button>
@@ -185,18 +170,18 @@ export default function NewOrchestrationPage() {
               }`}
               onClick={() => applyPreset("linear")}
             >
-              <CardHeader className="p-5 pb-3">
+              <CardHeader className="p-4 sm:p-5 pb-2 sm:pb-3">
                 <div className="flex items-center justify-between">
                   <Badge variant="outline" className="font-mono text-xs text-indigo-400 border-indigo-500/30">
                     Linear 3-Stage
                   </Badge>
                   {selectedPreset === "linear" && <span className="text-xs text-indigo-400 font-bold">Selected</span>}
                 </div>
-                <CardTitle className="text-base mt-2">{PRESET_LINEAR.name}</CardTitle>
+                <CardTitle className="text-sm sm:text-base mt-2">{PRESET_LINEAR.name}</CardTitle>
                 <CardDescription className="text-xs">{PRESET_LINEAR.description}</CardDescription>
               </CardHeader>
-              <CardContent className="p-5 pt-0">
-                <div className="font-mono text-xs text-muted-foreground bg-muted/40 p-2.5 rounded border border-border/40">
+              <CardContent className="p-4 sm:p-5 pt-0">
+                <div className="font-mono text-xs text-muted-foreground bg-muted/40 p-2.5 rounded border border-border/40 break-all">
                   research → analysis → synthesis
                 </div>
               </CardContent>
@@ -210,18 +195,18 @@ export default function NewOrchestrationPage() {
               }`}
               onClick={() => applyPreset("parallel")}
             >
-              <CardHeader className="p-5 pb-3">
+              <CardHeader className="p-4 sm:p-5 pb-2 sm:pb-3">
                 <div className="flex items-center justify-between">
                   <Badge variant="outline" className="font-mono text-xs text-cyan-400 border-cyan-500/30">
                     Branch & Join
                   </Badge>
                   {selectedPreset === "parallel" && <span className="text-xs text-cyan-400 font-bold">Selected</span>}
                 </div>
-                <CardTitle className="text-base mt-2">{PRESET_PARALLEL.name}</CardTitle>
+                <CardTitle className="text-sm sm:text-base mt-2">{PRESET_PARALLEL.name}</CardTitle>
                 <CardDescription className="text-xs">{PRESET_PARALLEL.description}</CardDescription>
               </CardHeader>
-              <CardContent className="p-5 pt-0">
-                <div className="font-mono text-xs text-muted-foreground bg-muted/40 p-2.5 rounded border border-border/40">
+              <CardContent className="p-4 sm:p-5 pt-0">
+                <div className="font-mono text-xs text-muted-foreground bg-muted/40 p-2.5 rounded border border-border/40 break-all">
                   [tech_research, risk_analysis] → final_synthesis
                 </div>
               </CardContent>
@@ -231,7 +216,7 @@ export default function NewOrchestrationPage() {
 
         {/* Goal Input */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold tracking-wide flex items-center justify-between">
+          <label className="text-xs sm:text-sm font-semibold tracking-wide flex items-center justify-between">
             <span>Overall User Goal</span>
             <span className="text-xs text-muted-foreground font-normal">Required</span>
           </label>
@@ -240,18 +225,18 @@ export default function NewOrchestrationPage() {
             onChange={(e) => setGoal(e.target.value)}
             required
             rows={2}
-            className="w-full rounded-md border border-border/70 bg-card/50 px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+            className="w-full rounded-md border border-border/70 bg-card/50 px-3.5 py-2.5 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
             placeholder="Describe the high-level objective of this multi-agent orchestration..."
           />
         </div>
 
         {/* Tasks DAG Definition */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <label className="text-sm font-semibold tracking-wide">
+          <div className="flex flex-wrap items-center justify-between gap-1">
+            <label className="text-xs sm:text-sm font-semibold tracking-wide">
               DAG Task Definitions (JSON)
             </label>
-            <span className="text-xs text-muted-foreground font-mono">
+            <span className="text-[11px] text-muted-foreground font-mono">
               Max 20 tasks • Cycle-free DAG
             </span>
           </div>
@@ -262,13 +247,14 @@ export default function NewOrchestrationPage() {
             value={tasksJson}
             onChange={(e) => setTasksJson(e.target.value)}
             rows={12}
-            className="w-full font-mono text-xs rounded-md border border-border bg-card dark:bg-black/60 px-3.5 py-2.5 text-foreground dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
+            className="w-full max-w-full font-mono text-xs rounded-md border border-border bg-card dark:bg-black/60 px-3.5 py-2.5 text-foreground dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
             placeholder="[]"
+            spellCheck={false}
           />
         </div>
 
         {/* Invariant reminders */}
-        <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 text-xs space-y-1.5 text-muted-foreground">
+        <div className="rounded-lg border border-primary/20 bg-primary/5 p-3.5 sm:p-4 text-xs space-y-1.5 text-muted-foreground">
           <div className="font-semibold text-primary">Architectural Guarantees:</div>
           <ul className="list-disc list-inside space-y-1">
             <li>LangGraph orchestrates the DAG but <strong>never</strong> invokes agent code directly.</li>
@@ -278,16 +264,16 @@ export default function NewOrchestrationPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-border/40">
-          <Link href="/orchestrations">
-            <Button type="button" variant="outline" disabled={submitting}>
+        <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-3 pt-4 border-t border-border/40">
+          <Link href="/orchestrations" className="w-full sm:w-auto">
+            <Button type="button" variant="outline" disabled={submitting} className="w-full sm:w-auto">
               Cancel
             </Button>
           </Link>
           <Button
             type="submit"
             disabled={submitting || !goal.trim()}
-            className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium shadow-md shadow-indigo-500/20"
+            className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium shadow-md shadow-indigo-500/20"
           >
             {submitting ? "Launching Orchestration..." : "Submit & Launch DAG →"}
           </Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -29,7 +29,7 @@ export default function AgentReputationPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<ReputationEvent | null>(null);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!agentId) return;
     setLoading(true);
     setError(null);
@@ -56,11 +56,11 @@ export default function AgentReputationPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [agentId]);
 
   useEffect(() => {
     loadData();
-  }, [agentId]);
+  }, [loadData]);
 
   const getOutcomeBadge = (outcome: string) => {
     switch (outcome) {
@@ -95,24 +95,24 @@ export default function AgentReputationPage() {
   };
 
   return (
-    <div className="container max-w-6xl mx-auto py-8 px-4 space-y-8 text-foreground">
+    <div className="max-w-6xl mx-auto py-6 sm:py-8 px-4 sm:px-6 space-y-6 sm:space-y-8 text-foreground">
       {/* Top Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-6">
         <div>
-          <div className="flex items-center gap-3">
-            <Link href={`/agents/${agentId}`} className="text-sm text-muted-foreground hover:text-foreground transition">
+          <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground">
+            <Link href={`/agents/${agentId}`} className="hover:text-foreground transition">
               &larr; Back to Agent
             </Link>
             <span className="text-muted-foreground/60">/</span>
-            <span className="text-sm text-muted-foreground font-medium">Reputation Evidence</span>
+            <span className="font-medium">Reputation Evidence</span>
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight mt-2 flex items-center gap-3 text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight mt-2 flex flex-wrap items-center gap-2 sm:gap-3 text-foreground">
             <span>{agent?.name || "Agent"} Reputation</span>
-            <Badge variant="outline" className="text-xs uppercase tracking-wider bg-primary/10 text-primary border-primary/20">
+            <Badge variant="outline" className="text-[10px] sm:text-xs uppercase tracking-wider bg-primary/10 text-primary border-primary/20">
               Observational Only
             </Badge>
           </h1>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className="text-muted-foreground text-xs sm:text-sm mt-1">
             Grounded strictly in cryptographic execution proofs anchored to ResultNotary. No subjective star ratings.
           </p>
         </div>
@@ -124,107 +124,107 @@ export default function AgentReputationPage() {
       </div>
 
       {error && (
-        <div className="bg-destructive/10 border border-destructive/30 text-destructive p-4 rounded-xl text-sm">
+        <div className="bg-destructive/10 border border-destructive/30 text-destructive p-4 rounded-xl text-xs sm:text-sm break-words">
           {error}
         </div>
       )}
 
       {/* Aggregate Counters Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
         <Card className="border-border bg-card">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Verified Executions
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
+            <CardDescription className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate">
+              Verified Execs
             </CardDescription>
-            <CardTitle className="text-2xl font-bold text-foreground mt-1">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-foreground mt-0.5 sm:mt-1">
               {profile?.total_verified_executions ?? 0}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-0 text-xs text-muted-foreground">
-            Canonical evidence records
+          <CardContent className="p-3.5 sm:p-4 pt-0 text-[11px] sm:text-xs text-muted-foreground">
+            Canonical records
           </CardContent>
         </Card>
 
         <Card className="border-border bg-card">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
-              Verified Successes
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
+            <CardDescription className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 truncate">
+              Successes
             </CardDescription>
-            <CardTitle className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-0.5 sm:mt-1">
               {profile?.verified_successes ?? 0}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-0 text-xs text-muted-foreground">
-            Cryptographically notarized
+          <CardContent className="p-3.5 sm:p-4 pt-0 text-[11px] sm:text-xs text-muted-foreground">
+            Notarized
           </CardContent>
         </Card>
 
         <Card className="border-border bg-card">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs font-semibold uppercase tracking-wider text-rose-600 dark:text-rose-400">
-              Verified Failures
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
+            <CardDescription className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-rose-600 dark:text-rose-400 truncate">
+              Failures
             </CardDescription>
-            <CardTitle className="text-2xl font-bold text-rose-600 dark:text-rose-400 mt-1">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-rose-600 dark:text-rose-400 mt-0.5 sm:mt-1">
               {profile?.verified_failures ?? 0}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-0 text-xs text-muted-foreground">
-            Terminal execution failures
+          <CardContent className="p-3.5 sm:p-4 pt-0 text-[11px] sm:text-xs text-muted-foreground">
+            Terminal errors
           </CardContent>
         </Card>
 
         <Card className="border-border bg-card">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
-              Verified Timeouts
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
+            <CardDescription className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400 truncate">
+              Timeouts
             </CardDescription>
-            <CardTitle className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-1">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-amber-600 dark:text-amber-400 mt-0.5 sm:mt-1">
               {profile?.verified_timeouts ?? 0}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-0 text-xs text-muted-foreground">
-            Exceeded execution deadline
+          <CardContent className="p-3.5 sm:p-4 pt-0 text-[11px] sm:text-xs text-muted-foreground">
+            Exceeded deadline
           </CardContent>
         </Card>
 
-        <Card className="border-border bg-card">
-          <CardHeader className="p-4 pb-2">
-            <CardDescription className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+        <Card className="border-border bg-card col-span-2 sm:col-span-1">
+          <CardHeader className="p-3.5 sm:p-4 pb-1 sm:pb-2">
+            <CardDescription className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-muted-foreground truncate">
               Cancellations
             </CardDescription>
-            <CardTitle className="text-2xl font-bold text-foreground mt-1">
+            <CardTitle className="text-xl sm:text-2xl font-bold text-foreground mt-0.5 sm:mt-1">
               {profile?.verified_cancellations ?? 0}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-0 text-xs text-muted-foreground">
-            Neutral client cancellations
+          <CardContent className="p-3.5 sm:p-4 pt-0 text-[11px] sm:text-xs text-muted-foreground">
+            Client cancelled
           </CardContent>
         </Card>
       </div>
 
-      {/* Phase 6.5: Deterministic Reputation Score Panel */}
+      {/* Deterministic Reputation Score Panel */}
       {score && (
         <Card className="border-primary/20 bg-card shadow-sm">
-          <CardHeader className="pb-3 border-b border-border flex flex-row items-center justify-between">
+          <CardHeader className="pb-3 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <CardTitle className="text-base font-semibold text-foreground flex items-center gap-2">
+              <CardTitle className="text-sm sm:text-base font-semibold text-foreground flex items-center gap-2">
                 Deterministic Reputation Score
                 <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/30">
                   {score.policy_version}
                 </Badge>
               </CardTitle>
               <CardDescription className="text-xs text-muted-foreground mt-0.5">
-                Derived exclusively from canonical verified execution evidence · Not a star rating
+                Derived exclusively from canonical verified execution evidence · Not a subjective rating
               </CardDescription>
             </div>
             {score.calculation_reason === "INITIAL_CALCULATION" && (
-              <Badge className="bg-secondary text-secondary-foreground border-border text-[10px]">Cold Start</Badge>
+              <Badge className="bg-secondary text-secondary-foreground border-border text-[10px] self-start sm:self-auto">Cold Start</Badge>
             )}
           </CardHeader>
-          <CardContent className="p-4">
+          <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col md:flex-row md:items-center gap-6">
               {/* Score Gauge */}
-              <div className="flex flex-col items-center gap-1 min-w-[100px]">
+              <div className="flex flex-col items-center gap-1 min-w-[100px] shrink-0">
                 <div className="relative">
                   <div
                     className="w-20 h-20 rounded-full border-4 border-border flex items-center justify-center bg-secondary/50"
@@ -249,31 +249,31 @@ export default function AgentReputationPage() {
               </div>
 
               {/* Score Metrics */}
-              <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-                <div className="bg-secondary/60 rounded-lg p-3 border border-border/50">
-                  <div className="text-muted-foreground mb-1">Score Scaled</div>
-                  <div className="font-mono text-foreground font-bold text-sm">{score.score_scaled} / 10000</div>
+              <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 text-xs">
+                <div className="bg-secondary/60 rounded-lg p-2.5 sm:p-3 border border-border/50">
+                  <div className="text-muted-foreground mb-1 text-[11px]">Score Scaled</div>
+                  <div className="font-mono text-foreground font-bold text-xs sm:text-sm">{score.score_scaled} / 10000</div>
                 </div>
-                <div className="bg-secondary/60 rounded-lg p-3 border border-border/50">
-                  <div className="text-muted-foreground mb-1">Success Rate</div>
-                  <div className="font-mono text-emerald-600 dark:text-emerald-400 font-bold text-sm">
+                <div className="bg-secondary/60 rounded-lg p-2.5 sm:p-3 border border-border/50">
+                  <div className="text-muted-foreground mb-1 text-[11px]">Success Rate</div>
+                  <div className="font-mono text-emerald-600 dark:text-emerald-400 font-bold text-xs sm:text-sm">
                     {score.success_rate_scaled !== null
                       ? `${(score.success_rate_scaled / 100).toFixed(1)}%`
                       : "—"}
                   </div>
                 </div>
-                <div className="bg-secondary/60 rounded-lg p-3 border border-border/50">
-                  <div className="text-muted-foreground mb-1">Experience</div>
-                  <div className="font-mono text-foreground font-bold text-sm">{score.experience_count} execs</div>
+                <div className="bg-secondary/60 rounded-lg p-2.5 sm:p-3 border border-border/50">
+                  <div className="text-muted-foreground mb-1 text-[11px]">Experience</div>
+                  <div className="font-mono text-foreground font-bold text-xs sm:text-sm">{score.experience_count} execs</div>
                 </div>
-                <div className="bg-secondary/60 rounded-lg p-3 border border-border/50">
-                  <div className="text-muted-foreground mb-1">Evidence Events</div>
-                  <div className="font-mono text-primary font-bold text-sm">{score.evidence_event_count}</div>
+                <div className="bg-secondary/60 rounded-lg p-2.5 sm:p-3 border border-border/50">
+                  <div className="text-muted-foreground mb-1 text-[11px]">Evidence Events</div>
+                  <div className="font-mono text-primary font-bold text-xs sm:text-sm">{score.evidence_event_count}</div>
                 </div>
               </div>
 
               {/* Evidence Hash */}
-              <div className="text-[11px] font-mono text-muted-foreground min-w-0 flex-shrink">
+              <div className="text-[11px] font-mono text-muted-foreground min-w-0 md:max-w-[200px] shrink">
                 <div className="text-muted-foreground/80 mb-0.5 text-[10px]">Evidence Set Hash</div>
                 <span className="text-foreground select-all break-all">{score.evidence_set_hash}</span>
               </div>
@@ -289,18 +289,18 @@ export default function AgentReputationPage() {
       )}
 
       {/* Main Content Area: Evidence Log + Detailed Inspector */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
         {/* Evidence Events List */}
         <div className="lg:col-span-7 space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold tracking-tight text-foreground">
+          <div className="flex items-center justify-between gap-2">
+            <h2 className="text-base sm:text-lg font-semibold tracking-tight text-foreground">
               Canonical Evidence Ledger ({events.length})
             </h2>
             <span className="text-xs text-muted-foreground">Excludes non-canonical & reorged</span>
           </div>
 
           {events.length === 0 ? (
-            <Card className="border-border p-8 text-center text-muted-foreground bg-card">
+            <Card className="border-border p-8 text-center text-muted-foreground bg-card text-sm">
               No verified reputation evidence events recorded for this agent yet.
             </Card>
           ) : (
@@ -311,14 +311,14 @@ export default function AgentReputationPage() {
                   <div
                     key={evt.id}
                     onClick={() => setSelectedEvent(evt)}
-                    className={`p-4 rounded-xl border transition cursor-pointer flex flex-col md:flex-row md:items-center justify-between gap-3 ${
+                    className={`p-3.5 sm:p-4 rounded-xl border transition cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                       isSelected
                         ? "bg-primary/10 border-primary/50 shadow-sm"
                         : "bg-card border-border hover:border-primary/40 hover:bg-secondary/40"
                     }`}
                   >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-1 min-w-0">
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                         {getOutcomeBadge(evt.outcome_type)}
                         {getStatusBadge(evt.status)}
                       </div>
@@ -330,12 +330,12 @@ export default function AgentReputationPage() {
                       </div>
                     </div>
 
-                    <div className="text-right flex flex-col items-end">
+                    <div className="sm:text-right flex flex-col sm:items-end items-start text-left shrink-0">
                       <span className="text-xs font-mono text-muted-foreground">
                         Block #{evt.block_number ?? "Pending"}
                       </span>
                       {evt.transaction_hash && (
-                        <span className="text-[11px] font-mono text-primary/80 truncate max-w-[120px]">
+                        <span className="text-[11px] font-mono text-primary/80 truncate max-w-[140px]">
                           {evt.transaction_hash.slice(0, 10)}...
                         </span>
                       )}
@@ -349,7 +349,7 @@ export default function AgentReputationPage() {
 
         {/* Selected Event Verification Inspector */}
         <div className="lg:col-span-5">
-          <Card className="border-border bg-card sticky top-20 shadow-sm">
+          <Card className="border-border bg-card lg:sticky lg:top-20 shadow-sm">
             <CardHeader className="pb-3 border-b border-border">
               <CardTitle className="text-base font-semibold text-foreground">
                 Evidence Chain Inspector
@@ -404,17 +404,17 @@ export default function AgentReputationPage() {
                   </div>
 
                   <div className="pt-2 border-t border-border space-y-2">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Chain ID</span>
                       <span className="font-mono text-foreground">{selectedEvent.chain_id}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Registry Contract</span>
-                      <span className="font-mono text-foreground">
-                        {selectedEvent.contract_address.slice(0, 10)}...{selectedEvent.contract_address.slice(-6)}
+                      <span className="font-mono text-foreground truncate max-w-[150px]">
+                        {selectedEvent.contract_address.slice(0, 8)}...{selectedEvent.contract_address.slice(-4)}
                       </span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-center">
                       <span className="text-muted-foreground">Confirmations</span>
                       <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
                         {selectedEvent.confirmations} depth
@@ -423,7 +423,7 @@ export default function AgentReputationPage() {
                     {selectedEvent.transaction_hash && (
                       <div className="flex justify-between items-center">
                         <span className="text-muted-foreground">Transaction</span>
-                        <span className="font-mono text-primary truncate max-w-[150px]">
+                        <span className="font-mono text-primary truncate max-w-[140px]">
                           {selectedEvent.transaction_hash}
                         </span>
                       </div>

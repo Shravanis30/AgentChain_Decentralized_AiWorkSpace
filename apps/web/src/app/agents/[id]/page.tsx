@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,13 +17,9 @@ import {
 } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default function AgentDetailPage({ params }: PageProps) {
-  const resolvedParams = use(params);
-  const agentId = resolvedParams.id;
+export default function AgentDetailPage() {
+  const params = useParams();
+  const agentId = (params?.id as string) || "";
   const router = useRouter();
   const { user } = useAuth();
 
@@ -43,7 +39,7 @@ export default function AgentDetailPage({ params }: PageProps) {
   const [executing, setExecuting] = useState(false);
   const [execResult, setExecResult] = useState<ExecutionSubmitResponse | null>(null);
 
-  const loadAgentData = async () => {
+  const loadAgentData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -55,11 +51,11 @@ export default function AgentDetailPage({ params }: PageProps) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [agentId]);
 
   useEffect(() => {
     loadAgentData();
-  }, [agentId]);
+  }, [loadAgentData]);
 
   const isOwnerOrAdmin =
     user && agent && (user.id === agent.owner_user_id || user.primary_role === "ADMIN");
@@ -151,13 +147,13 @@ export default function AgentDetailPage({ params }: PageProps) {
   };
 
   if (loading) {
-    return <div className="max-w-7xl mx-auto px-4 py-20 text-center text-muted-foreground">Loading agent details...</div>;
+    return <div className="max-w-7xl mx-auto px-4 sm:px-6 py-20 text-center text-muted-foreground text-sm">Loading agent details...</div>;
   }
 
   if (!agent) {
     return (
-      <div className="max-w-7xl mx-auto px-4 py-20 text-center">
-        <p className="text-destructive mb-4">{error || "Agent not found"}</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-20 text-center space-y-4">
+        <p className="text-destructive">{error || "Agent not found"}</p>
         <Link href="/agents">
           <Button variant="outline">Back to Catalog</Button>
         </Link>
@@ -168,21 +164,21 @@ export default function AgentDetailPage({ params }: PageProps) {
   const ver = agent.current_version;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Header and Lifecycle Controls */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-border pb-6">
+      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-border pb-6">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-extrabold tracking-tight">{agent.name}</h1>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{agent.name}</h1>
             <Badge variant={getStatusBadgeVariant(agent.status)}>{agent.status}</Badge>
           </div>
-          <p className="text-sm font-mono text-muted-foreground mt-1">
+          <p className="text-xs sm:text-sm font-mono text-muted-foreground mt-1 break-all">
             slug: {agent.slug} • version: {ver?.version || "1.0.0"} • owner: {agent.owner_user_id.slice(0, 10)}...
           </p>
         </div>
 
         {/* Lifecycle Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2 pt-1 lg:pt-0">
           {isOwnerOrAdmin && (
             <>
               {agent.status === "DRAFT" && (
@@ -216,20 +212,20 @@ export default function AgentDetailPage({ params }: PageProps) {
       </div>
 
       {error && (
-        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm">
+        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm break-words">
           {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
         {/* Left Column: Metadata & Manifest Details */}
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Overview</CardTitle>
+              <CardTitle className="text-base sm:text-lg">Overview</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 {agent.description || "No description provided."}
               </p>
               <div>
@@ -252,7 +248,7 @@ export default function AgentDetailPage({ params }: PageProps) {
           {/* Schemas */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Protocol Schemas</CardTitle>
+              <CardTitle className="text-base sm:text-lg">Protocol Schemas</CardTitle>
               <CardDescription className="text-xs">
                 Strict JSON Schema definitions for input invocation and output deliverable validation.
               </CardDescription>
@@ -260,13 +256,13 @@ export default function AgentDetailPage({ params }: PageProps) {
             <CardContent className="space-y-4">
               <div>
                 <span className="text-xs font-semibold block mb-1">Input Schema</span>
-                <pre className="p-3 bg-secondary/30 rounded-lg text-xs font-mono overflow-x-auto border border-border">
+                <pre className="p-3 bg-secondary/30 rounded-lg text-xs font-mono overflow-x-auto border border-border max-w-full">
                   {JSON.stringify(ver?.input_schema || {}, null, 2)}
                 </pre>
               </div>
               <div>
                 <span className="text-xs font-semibold block mb-1">Output Schema</span>
-                <pre className="p-3 bg-secondary/30 rounded-lg text-xs font-mono overflow-x-auto border border-border">
+                <pre className="p-3 bg-secondary/30 rounded-lg text-xs font-mono overflow-x-auto border border-border max-w-full">
                   {JSON.stringify(ver?.output_schema || {}, null, 2)}
                 </pre>
               </div>
@@ -274,7 +270,7 @@ export default function AgentDetailPage({ params }: PageProps) {
           </Card>
 
           {/* Runtime & Pricing */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Card>
               <CardHeader>
                 <CardTitle className="text-sm font-semibold">Runtime Configuration</CardTitle>
@@ -301,7 +297,7 @@ export default function AgentDetailPage({ params }: PageProps) {
         <div className="space-y-6">
           <Card className="border-primary/40 shadow-lg">
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <CardTitle className="text-base font-bold">Execute Agent</CardTitle>
                 <Badge variant={agent.status === "PUBLISHED" ? "success" : "secondary"}>
                   {agent.status === "PUBLISHED" ? "Ready" : "Inactive"}
@@ -322,7 +318,7 @@ export default function AgentDetailPage({ params }: PageProps) {
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                     disabled={agent.status !== "PUBLISHED" || executing}
-                    className="w-full bg-secondary/40 font-mono text-xs p-3 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+                    className="w-full max-w-full bg-secondary/40 font-mono text-xs p-3 rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
                   />
                 </div>
 
@@ -349,7 +345,7 @@ export default function AgentDetailPage({ params }: PageProps) {
                     Hash: {execResult.input_hash.slice(0, 16)}...
                   </div>
                   <Link href={`/executions/${execResult.execution_id}`}>
-                    <Button size="sm" variant="outline" className="w-full mt-2">
+                    <Button size="sm" variant="outline" className="w-full mt-2 text-xs">
                       View Execution Details
                     </Button>
                   </Link>

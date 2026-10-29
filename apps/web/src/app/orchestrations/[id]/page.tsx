@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState, use, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,17 +12,12 @@ import {
   fetchOrchestrationSSETicket,
   getOrchestrationEventsUrl,
   type Orchestration,
-  type OrchestrationTask,
   type OrchestrationArtifact,
 } from "@/lib/api";
 
-interface PageProps {
-  params: Promise<{ id: string }>;
-}
-
-export default function OrchestrationDetailPage({ params }: PageProps) {
-  const resolvedParams = use(params);
-  const orchestrationId = resolvedParams.id;
+export default function OrchestrationDetailPage() {
+  const params = useParams();
+  const orchestrationId = (params?.id as string) || "";
 
   const [orchestration, setOrchestration] = useState<Orchestration | null>(null);
   const [loading, setLoading] = useState(true);
@@ -106,7 +102,6 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
                 ...prev.slice(0, 49),
               ]);
 
-              // Reload fresh data from database when significant events occur
               loadData();
             }
 
@@ -170,8 +165,8 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
 
   if (error || !orchestration) {
     return (
-      <div className="space-y-4">
-        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 space-y-4">
+        <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-sm break-words">
           {error || "Orchestration not found"}
         </div>
         <Link href="/orchestrations">
@@ -185,20 +180,20 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
   const canCancel = ["PLANNING", "READY", "RUNNING"].includes(orchestration.status);
 
   return (
-    <div className="space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Header & Controls */}
       <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-border/40 pb-6">
-        <div className="space-y-2 flex-1">
+        <div className="space-y-2 flex-1 min-w-0">
           <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
             <Link href="/orchestrations" className="hover:underline">
               Orchestrations
             </Link>
             <span>/</span>
-            <span className="text-foreground">{orchestration.id}</span>
+            <span className="text-foreground truncate max-w-[200px]">{orchestration.id}</span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight text-foreground">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground break-words">
               {orchestration.goal}
             </h1>
             {getStatusBadge(orchestration.status)}
@@ -214,8 +209,8 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-xs text-muted-foreground font-mono">
-            <div>
+          <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-6 gap-y-1 text-xs text-muted-foreground font-mono">
+            <div className="truncate max-w-full">
               ID: <span className="text-foreground">{orchestration.id}</span>
             </div>
             <div>
@@ -227,7 +222,7 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0 pt-1 md:pt-0">
           <Button variant="outline" size="sm" onClick={() => loadData()}>
             Refresh
           </Button>
@@ -246,8 +241,8 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
 
       {/* Failure Banner */}
       {orchestration.status === "FAILED" && (
-        <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-lg text-rose-300 text-sm space-y-1">
-          <div className="font-semibold flex items-center gap-2">
+        <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-lg text-rose-300 text-sm space-y-1 break-words">
+          <div className="font-semibold flex flex-wrap items-center gap-2">
             <span>Orchestration Execution Failed</span>
             {orchestration.error_code && <code className="font-mono text-xs bg-rose-950/60 px-2 py-0.5 rounded">{orchestration.error_code}</code>}
           </div>
@@ -258,32 +253,32 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
       {/* DAG Visualization Section */}
       <Card className="bg-card/40 backdrop-blur border-border/60">
         <CardHeader className="pb-3 border-b border-border/40">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
-              <CardTitle className="text-base font-semibold">DAG Execution Pipeline</CardTitle>
+              <CardTitle className="text-sm sm:text-base font-semibold">DAG Execution Pipeline</CardTitle>
               <CardDescription className="text-xs">
                 Interactive Directed Acyclic Graph. Click a task to view execution details, input/output hashes, and isolated logs.
               </CardDescription>
             </div>
-            <span className="font-mono text-xs text-muted-foreground">
+            <span className="font-mono text-xs text-muted-foreground self-start sm:self-auto">
               {orchestration.tasks.filter((t) => t.status === "SUCCEEDED").length} of {orchestration.tasks.length} Completed
             </span>
           </div>
         </CardHeader>
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <CardContent className="p-4 sm:p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {orchestration.tasks.map((task, idx) => {
               const isSelected = selectedTask?.task_key === task.task_key;
               return (
                 <div
                   key={task.id || task.task_key}
                   onClick={() => setSelectedTaskKey(task.task_key)}
-                  className={`cursor-pointer rounded-lg p-4 border transition-all relative ${getTaskStatusColor(
+                  className={`cursor-pointer rounded-lg p-3.5 sm:p-4 border transition-all relative ${getTaskStatusColor(
                     task.status
                   )} ${isSelected ? "ring-2 ring-indigo-500 shadow-lg shadow-indigo-500/10" : ""}`}
                 >
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="font-mono text-xs font-bold text-foreground">
+                    <span className="font-mono text-xs font-bold text-foreground truncate">
                       #{idx + 1} {task.task_key}
                     </span>
                     {getStatusBadge(task.status)}
@@ -331,9 +326,9 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
         {selectedTask ? (
           <Card className="bg-card/40 backdrop-blur border-border/60">
             <CardHeader className="pb-3 border-b border-border/40">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <div>
-                  <CardTitle className="text-base font-semibold">
+                  <CardTitle className="text-sm sm:text-base font-semibold">
                     Task: <span className="font-mono text-indigo-400">{selectedTask.task_key}</span>
                   </CardTitle>
                   <CardDescription className="text-xs">
@@ -343,8 +338,8 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
                 {getStatusBadge(selectedTask.status)}
               </div>
             </CardHeader>
-            <CardContent className="p-5 space-y-4">
-              <div className="grid grid-cols-2 gap-3 text-xs font-mono">
+            <CardContent className="p-4 sm:p-5 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
                 <div className="bg-card/60 p-2.5 rounded border border-border/40">
                   <div className="text-muted-foreground text-[10px] uppercase">Agent Target</div>
                   <div className="text-foreground truncate font-medium mt-0.5">{selectedTask.agent_id}:{selectedTask.agent_version}</div>
@@ -354,27 +349,27 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
                   <div className="text-foreground truncate mt-0.5">
                     {selectedTask.execution_id ? (
                       <Link href={`/executions/${selectedTask.execution_id}`} className="text-indigo-400 hover:underline">
-                        {selectedTask.execution_id}
+                        {selectedTask.execution_id.slice(0, 16)}...
                       </Link>
                     ) : (
                       "Pending Worker Outbox"
                     )}
                   </div>
                 </div>
-                <div className="bg-card/60 p-2.5 rounded border border-border/40 col-span-2">
+                <div className="bg-card/60 p-2.5 rounded border border-border/40 sm:col-span-2">
                   <div className="text-muted-foreground text-[10px] uppercase">Input Hash (Canonical SHA-256)</div>
-                  <div className="text-foreground truncate font-mono text-[11px] mt-0.5">{selectedTask.input_hash || "-"}</div>
+                  <div className="text-foreground break-all font-mono text-[11px] mt-0.5">{selectedTask.input_hash || "-"}</div>
                 </div>
                 {selectedTask.output_hash && (
-                  <div className="bg-card/60 p-2.5 rounded border border-border/40 col-span-2">
+                  <div className="bg-card/60 p-2.5 rounded border border-border/40 sm:col-span-2">
                     <div className="text-muted-foreground text-[10px] uppercase">Output Hash (Canonical SHA-256)</div>
-                    <div className="text-emerald-400 truncate font-mono text-[11px] mt-0.5">{selectedTask.output_hash}</div>
+                    <div className="text-emerald-400 break-all font-mono text-[11px] mt-0.5">{selectedTask.output_hash}</div>
                   </div>
                 )}
               </div>
 
               {selectedTask.error_message && (
-                <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded text-rose-300 text-xs">
+                <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded text-rose-300 text-xs break-words">
                   <div className="font-semibold">Error: {selectedTask.error_code || "EXECUTION_ERROR"}</div>
                   <div className="mt-1">{selectedTask.error_message}</div>
                 </div>
@@ -386,7 +381,7 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
                     <span>Task Output Payload</span>
                     <span className="text-[11px] text-muted-foreground font-mono">Validated Schema</span>
                   </div>
-                  <pre className="p-3 bg-black/60 rounded border border-border/50 text-xs font-mono text-zinc-200 overflow-x-auto max-h-56">
+                  <pre className="p-3 bg-black/60 rounded border border-border/50 text-xs font-mono text-zinc-200 overflow-x-auto max-h-56 max-w-full">
                     {JSON.stringify(selectedTask.output_data, null, 2)}
                   </pre>
                 </div>
@@ -404,14 +399,14 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
           {/* Final Orchestration Result */}
           <Card className="bg-card/40 backdrop-blur border-border/60">
             <CardHeader className="pb-3 border-b border-border/40">
-              <CardTitle className="text-base font-semibold">Orchestration Synthesis Result</CardTitle>
+              <CardTitle className="text-sm sm:text-base font-semibold">Orchestration Synthesis Result</CardTitle>
               <CardDescription className="text-xs">
                 Aggregated output computed across all DAG branches upon graph termination.
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-5">
+            <CardContent className="p-4 sm:p-5">
               {orchestration.result ? (
-                <pre className="p-3 bg-black/60 rounded border border-border/50 text-xs font-mono text-emerald-300 overflow-x-auto max-h-60">
+                <pre className="p-3 bg-black/60 rounded border border-border/50 text-xs font-mono text-emerald-300 overflow-x-auto max-h-60 max-w-full">
                   {JSON.stringify(orchestration.result, null, 2)}
                 </pre>
               ) : (
@@ -427,19 +422,19 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
           {/* Artifacts Table */}
           <Card className="bg-card/40 backdrop-blur border-border/60">
             <CardHeader className="pb-3 border-b border-border/40">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between gap-2">
                 <div>
-                  <CardTitle className="text-base font-semibold">Passed Artifacts</CardTitle>
+                  <CardTitle className="text-sm sm:text-base font-semibold">Passed Artifacts</CardTitle>
                   <CardDescription className="text-xs">
                     Cryptographically hashed intermediate and terminal data payloads.
                   </CardDescription>
                 </div>
-                <Badge variant="outline" className="font-mono text-xs">
+                <Badge variant="outline" className="font-mono text-xs shrink-0">
                   {orchestration.artifacts?.length || 0} Artifacts
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent className="p-5">
+            <CardContent className="p-4 sm:p-5">
               {!orchestration.artifacts || orchestration.artifacts.length === 0 ? (
                 <div className="py-6 text-center text-xs text-muted-foreground font-mono">
                   No artifacts registered yet.
@@ -448,15 +443,15 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
                 <div className="space-y-3">
                   {orchestration.artifacts.map((art: OrchestrationArtifact) => (
                     <div key={art.id} className="p-3 bg-card/60 rounded border border-border/40 text-xs space-y-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-mono font-semibold text-foreground">{art.artifact_key}</span>
-                        <Badge variant="outline" className="text-[10px] font-mono">{art.content_type}</Badge>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="font-mono font-semibold text-foreground truncate">{art.artifact_key}</span>
+                        <Badge variant="outline" className="text-[10px] font-mono shrink-0">{art.content_type}</Badge>
                       </div>
                       <div className="text-[11px] text-muted-foreground flex flex-wrap gap-x-4">
                         <span>Producer: <code className="font-mono text-indigo-300">{art.producer_agent_id}:{art.producer_agent_version}</code></span>
                         <span>Size: <code className="font-mono text-foreground">{art.size_bytes} B</code></span>
                       </div>
-                      <div className="font-mono text-[10px] text-muted-foreground truncate">
+                      <div className="font-mono text-[10px] text-muted-foreground break-all">
                         SHA-256: {art.sha256}
                       </div>
                     </div>
@@ -472,22 +467,22 @@ export default function OrchestrationDetailPage({ params }: PageProps) {
       <Card className="bg-card/40 backdrop-blur border-border/60">
         <CardHeader className="pb-3 border-b border-border/40">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm font-semibold font-mono">Live Orchestration Stream</CardTitle>
-            <span className="text-xs text-muted-foreground font-mono">SSE / Redis PubSub</span>
+            <CardTitle className="text-xs sm:text-sm font-semibold font-mono">Live Orchestration Stream</CardTitle>
+            <span className="text-[11px] sm:text-xs text-muted-foreground font-mono">SSE / Redis PubSub</span>
           </div>
         </CardHeader>
-        <CardContent className="p-4">
-          <div className="space-y-1.5 font-mono text-xs max-h-48 overflow-y-auto bg-black/70 p-3 rounded border border-border/40">
+        <CardContent className="p-3.5 sm:p-4">
+          <div className="space-y-1.5 font-mono text-xs max-h-48 overflow-y-auto bg-black/70 p-3 rounded border border-border/40 max-w-full overflow-x-auto">
             {eventLogs.length === 0 ? (
               <div className="text-muted-foreground text-center py-4">Listening for live orchestration events...</div>
             ) : (
               eventLogs.map((log, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <span className="text-muted-foreground text-[11px]">{log.time}</span>
-                  <Badge variant="outline" className="text-[10px] py-0 px-1.5 text-indigo-400 border-indigo-500/30">
+                <div key={i} className="flex flex-wrap sm:flex-nowrap items-start sm:items-center gap-2 sm:gap-3 text-xs">
+                  <span className="text-muted-foreground text-[11px] shrink-0">{log.time}</span>
+                  <Badge variant="outline" className="text-[10px] py-0 px-1.5 text-indigo-400 border-indigo-500/30 shrink-0">
                     {log.event}
                   </Badge>
-                  <span className="text-zinc-200 truncate">{log.detail}</span>
+                  <span className="text-zinc-200 break-words">{log.detail}</span>
                 </div>
               ))
             )}

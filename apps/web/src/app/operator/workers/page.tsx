@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ export default function OperatorWorkersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadWorkers = async () => {
+  const loadWorkers = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -24,25 +24,25 @@ export default function OperatorWorkersPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadWorkers();
     const interval = setInterval(loadWorkers, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [loadWorkers]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border pb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Cluster Worker Nodes</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Cluster Worker Nodes</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
             Real-time worker daemon heartbeats, sandboxes, and capacity telemetry
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button size="sm" variant="outline" onClick={loadWorkers}>
             Refresh
           </Button>
@@ -55,36 +55,36 @@ export default function OperatorWorkersPage() {
       </div>
 
       {loading && workers.length === 0 && (
-        <div className="text-center py-16 text-muted-foreground">
+        <div className="text-center py-16 text-muted-foreground text-sm">
           Querying cluster worker heartbeats...
         </div>
       )}
 
       {error && (
-        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-sm">
+        <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-xs sm:text-sm break-words">
           {error} (Requires Operator or Admin role)
         </div>
       )}
 
       {/* Workers Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {workers.map((w) => (
           <Card key={w.worker_id} className="relative overflow-hidden">
             <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-mono font-semibold truncate max-w-[200px]">
+              <div className="flex items-center justify-between gap-2">
+                <CardTitle className="text-xs sm:text-sm font-mono font-semibold truncate">
                   {w.worker_id}
                 </CardTitle>
                 {w.is_alive ? (
-                  <Badge variant="success" className="gap-1.5">
+                  <Badge variant="success" className="gap-1.5 shrink-0 text-[10px] sm:text-xs">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     ONLINE
                   </Badge>
                 ) : (
-                  <Badge variant="destructive">STALE / OFFLINE</Badge>
+                  <Badge variant="destructive" className="shrink-0 text-[10px] sm:text-xs">OFFLINE</Badge>
                 )}
               </div>
-              <CardDescription className="text-xs font-mono">
+              <CardDescription className="text-xs font-mono truncate">
                 v{w.version} • {w.hostname || "unknown host"}
               </CardDescription>
             </CardHeader>
@@ -98,14 +98,14 @@ export default function OperatorWorkersPage() {
                 </div>
                 <div className="p-2 bg-secondary/30 rounded border border-border">
                   <span className="text-muted-foreground block text-[10px] uppercase font-semibold">
-                    Active Sandboxes
+                    Active
                   </span>
-                  <span className="font-semibold">{w.active_execution_count}</span>
+                  <span className="font-semibold">{w.active_execution_count} sandboxes</span>
                 </div>
               </div>
 
-              <div className="text-[11px] text-muted-foreground flex justify-between">
-                <span>Last Heartbeat:</span>
+              <div className="text-[11px] text-muted-foreground flex justify-between items-center">
+                <span>Heartbeat:</span>
                 <span className="font-mono">{w.heartbeat_age_seconds}s ago</span>
               </div>
             </CardContent>
@@ -113,7 +113,7 @@ export default function OperatorWorkersPage() {
         ))}
 
         {!loading && workers.length === 0 && !error && (
-          <div className="col-span-full text-center py-12 text-muted-foreground bg-secondary/10 rounded-xl border border-dashed border-border">
+          <div className="col-span-full text-center py-12 text-muted-foreground bg-secondary/10 rounded-xl border border-dashed border-border text-sm p-4">
             No active worker heartbeats found in Redis cluster registry.
           </div>
         )}
